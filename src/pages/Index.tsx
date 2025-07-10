@@ -42,17 +42,17 @@ const Index = () => {
         <img 
           src={aiBrainHero} 
           alt="AI Brain Hero" 
-          className="absolute top-0 right-0 w-64 h-64 object-cover opacity-30 rounded-bl-3xl animate-pulse"
+          className="absolute top-0 right-0 w-64 h-64 object-cover opacity-30 rounded-bl-3xl brain-glow float-animation"
         />
         <img 
           src={floridaPalmCornerImg} 
           alt="Florida palms" 
-          className="absolute top-0 left-0 w-48 h-48 object-cover opacity-40 rounded-br-3xl"
+          className="absolute top-0 left-0 w-48 h-48 object-cover opacity-40 rounded-br-3xl glow-pulse"
         />
         <img 
           src={detailedNeonBrain} 
           alt="Neon Brain" 
-          className="absolute bottom-20 left-10 w-32 h-32 object-cover opacity-20 rounded-full animate-pulse"
+          className="absolute bottom-20 left-10 w-32 h-32 object-cover opacity-20 rounded-full neural-pulse lightning-flicker"
         />
 
         {/* Navigation */}
@@ -104,7 +104,7 @@ const Index = () => {
               <img 
                 src={brainIcon} 
                 alt="AI Brain" 
-                className="absolute top-0 right-0 w-24 h-24 opacity-40 animate-pulse" 
+                className="absolute top-0 right-0 w-24 h-24 opacity-40 brain-glow neural-pulse" 
               />
               <h1 className="text-6xl md:text-8xl font-bold leading-tight relative z-10">
                 <span className="font-tech bg-gradient-to-r from-purple-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent animate-none">
@@ -169,7 +169,7 @@ const Index = () => {
         <img 
           src={detailedNeonBrain} 
           alt="Background brain" 
-          className="absolute top-10 right-10 w-48 h-48 opacity-10 animate-pulse"
+          className="absolute top-10 right-10 w-48 h-48 opacity-10 brain-glow float-animation lightning-flicker"
         />
         
         <div className="text-center mb-16 relative z-10">
