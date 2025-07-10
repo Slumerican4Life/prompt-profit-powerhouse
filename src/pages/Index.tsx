@@ -1,646 +1,291 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
-import { CheckCircle, Star, Phone, Mail, MapPin, DollarSign, TrendingUp, Users, MessageCircle, Shield, Clock, Award, Zap, Globe, Brain, BrainCircuit } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { MessageCircle, Phone, MapPin, Clock, Star, Shield, Zap, Award, CheckCircle, Home, User, Settings } from "lucide-react";
 import { LiveChat } from "@/components/LiveChat";
-import { supabase } from "@/integrations/supabase/client";
-import aiBrainHero from "@/assets/ai-brain-hero.jpg";
-import brainIcon from "@/assets/brain-icon.jpg";
-import floridaRoofer from "@/assets/florida-roofer-action.jpg";
-import floridaHvac from "@/assets/florida-hvac-expert.jpg";
-import floridaPlumber from "@/assets/florida-plumber-work.jpg";
+import { useAuth } from "@/hooks/useAuth";
+import floridaHVACExpertImg from "@/assets/florida-hvac-expert.jpg";
+import floridaPlumberWorkImg from "@/assets/florida-plumber-work.jpg";
+import floridaRooferActionImg from "@/assets/florida-roofer-action.jpg";
+import floridaOakCornerImg from "@/assets/florida-oak-corner.jpg";
+import floridaPalmCornerImg from "@/assets/florida-palm-corner.jpg";
 
 const Index = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-    serviceType: "",
-    urgency: "",
-    budget: "",
-    description: ""
-  });
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [services, setServices] = useState<any[]>([]);
-  const { toast } = useToast();
+  const { user, profile } = useAuth();
 
-  // Load services from Supabase
-  useEffect(() => {
-    const loadServices = async () => {
-      const { data, error } = await supabase
-        .from('services')
-        .select('*')
-        .eq('active', true)
-        .order('name');
-      
-      if (data && !error) {
-        setServices(data);
-      }
-    };
-    
-    loadServices();
-  }, []);
+  const services = [
+    { name: "🏠 Roofing", description: "Emergency repairs & full replacement", price: "Get estimates when available", icon: "🏠", urgent: true },
+    { name: "❄️ AC/HVAC", description: "24/7 cooling system experts", price: "Free estimates when available", icon: "❄️", popular: true },
+    { name: "🔧 Plumbing", description: "Emergency & scheduled service", price: "Quick response available", icon: "🔧", popular: true },
+    { name: "⚡ Electrical", description: "Licensed & insured electricians", price: "Safety first approach", icon: "⚡", urgent: false },
+    { name: "🏊 Pool Service", description: "Maintenance & equipment repair", price: "Seasonal packages available", icon: "🏊", popular: false },
+    { name: "🌿 Landscaping", description: "Design & maintenance", price: "Custom quotes available", icon: "🌿", popular: false },
+  ];
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    try {
-      // Calculate lead value based on urgency and service type
-      const calculateLeadValue = () => {
-        const emergencyMultiplier = formData.urgency === 'Emergency' ? 1.5 : 1;
-        const serviceValues: { [key: string]: number } = {
-          'Roofing': 400,
-          'AC/HVAC': 300,
-          'Plumbing': 250,
-          'Electrical': 350,
-          'Pool Service': 200,
-          'Landscaping': 250,
-          'Home Remodeling': 500,
-          'Cleaning Services': 150,
-          'Windows/Doors': 300,
-          'Solar': 600,
-          'Hurricane Prep': 450
-        };
-        
-        const baseValue = serviceValues[formData.serviceType] || 200;
-        return Math.round(baseValue * emergencyMultiplier);
-      };
-
-      const leadValue = calculateLeadValue();
-      const leadData = {
-        full_name: formData.name,
-        phone: formData.phone,
-        email: formData.email,
-        service_needed: formData.serviceType,
-        timeline: formData.urgency,
-        budget: formData.budget,
-        property_address: formData.address,
-        project_description: formData.description,
-        urgency_level: formData.urgency,
-        lead_value: leadValue,
-        timestamp: new Date().toISOString()
-      };
-
-      // Parallel execution: Save to both Supabase AND Google Sheets
-      const [supabaseResult, googleSheetsResult] = await Promise.allSettled([
-        // Save to Supabase
-        supabase.from('leads').insert(leadData).select().single(),
-        
-        // Save to Google Sheets
-        fetch("https://script.google.com/macros/s/YOUR_GOOGLE_SCRIPT_ID/exec", {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(leadData)
-        })
-      ]);
-
-      // Check Supabase result
-      if (supabaseResult.status === 'rejected' || 
-          (supabaseResult.status === 'fulfilled' && supabaseResult.value.error)) {
-        console.error("Supabase error:", supabaseResult);
-        throw new Error("Database save failed");
-      }
-
-      console.log("Lead captured successfully in both systems:", leadData);
-      
-      setIsSubmitted(true);
-      toast({
-        title: "🎯 Premium Lead Captured!",
-        description: `High-value ${formData.serviceType} lead worth $${leadValue} saved to database & spreadsheet!`,
-      });
-    } catch (error) {
-      console.error("Error capturing lead:", error);
-      toast({
-        title: "Error",
-        description: "There was an issue capturing your lead. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  if (isSubmitted) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center p-4">
-        <Card className="max-w-md w-full text-center glass-card luxury-enter">
-          <CardContent className="pt-6">
-            <div className="glow-pulse rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center bg-green-500/20">
-              <CheckCircle className="h-12 w-12 text-green-400" />
-            </div>
-            <h2 className="text-3xl font-bold mb-3 luxury-text">Lead Captured!</h2>
-            <p className="text-muted-foreground mb-6 text-lg">
-              High-value {formData.serviceType} lead worth $75-400 ready for sale to local contractors.
-            </p>
-            <div className="bg-green-500/10 p-6 rounded-xl border border-green-500/20 backdrop-blur-sm">
-              <p className="text-green-400 font-semibold text-lg">💰 Business Model:</p>
-              <p className="text-green-300 text-sm mt-2">
-                Sell this lead to 3-5 local contractors at $75-150 each = $225-750 profit per lead!
-              </p>
-            </div>
-            <Button 
-              onClick={() => setIsSubmitted(false)} 
-              className="mt-6 w-full"
-              variant="outline"
-            >
-              Capture Another Lead
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  const trustSignals = [
+    { icon: Shield, text: "Licensed & Insured", desc: "All contractors verified" },
+    { icon: Clock, text: "24/7 Emergency", desc: "Hurricane response ready" }, 
+    { icon: Award, text: "5-Star Rated", desc: "Premium quality guaranteed" },
+    { icon: Zap, text: "Instant Connect", desc: "Response within hours" }
+  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
-      {/* Premium Header */}
-      <header className="relative bg-gradient-to-r from-card/80 to-card/60 backdrop-blur-xl border-b border-border/50 shadow-deep">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5"></div>
-        <div className="relative container mx-auto px-4 py-6">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                <span className="text-xl font-bold text-white">🌴</span>
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold luxury-text">Florida Service Leads</h1>
-                <p className="text-sm text-muted-foreground">Premium Contractor Network Since 2019</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-6 text-sm">
-              <div className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
-                <Phone className="h-4 w-4" />
-                <span className="font-medium">(941) 253-8936</span>
-              </div>
-              <div className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
-                <Mail className="h-4 w-4" />
-                <span className="font-medium">cleanasawhistle1000@gmail.com</span>
-              </div>
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-accent/10">
+      {/* Hero Section with Navigation */}
+      <div className="relative bg-gradient-to-r from-primary via-primary to-accent min-h-[80vh] flex flex-col">
+        {/* Decorative corner images */}
+        <img 
+          src={floridaOakCornerImg} 
+          alt="Florida scenery" 
+          className="absolute top-0 left-0 w-32 h-32 object-cover opacity-20 rounded-br-3xl"
+        />
+        <img 
+          src={floridaPalmCornerImg} 
+          alt="Florida palms" 
+          className="absolute top-0 right-0 w-32 h-32 object-cover opacity-20 rounded-bl-3xl"
+        />
+
+        {/* Navigation */}
+        <nav className="container mx-auto px-6 py-4 flex items-center justify-between relative z-10">
+          <div className="flex items-center space-x-2">
+            <Home className="h-8 w-8 text-white" />
+            <span className="text-xl font-bold text-white">FloridaServiceConnect</span>
           </div>
-        </div>
-      </header>
-
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
-          {/* Enhanced Hero Section */}
-          <div className="space-y-8 luxury-enter">
-            <div className="space-y-8">
-              <div className="inline-flex items-center gap-3 bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 rounded-full px-6 py-3 text-sm font-medium text-primary backdrop-blur-sm">
-                <BrainCircuit className="h-5 w-5" />
-                <span className="font-tech">AI-Powered Lead Matching</span>
+          <div className="hidden md:flex items-center space-x-6">
+            <a href="#services" className="text-white/90 hover:text-white transition-colors">Services</a>
+            <a href="#about" className="text-white/90 hover:text-white transition-colors">About</a>
+            <a href="#contact" className="text-white/90 hover:text-white transition-colors">Contact</a>
+            {user ? (
+              <div className="flex items-center gap-3">
+                {(profile?.role === 'owner' || profile?.role === 'manager') && (
+                  <Link to="/dashboard">
+                    <Button variant="secondary" size="sm" className="flex items-center gap-2">
+                      <Settings className="h-4 w-4" />
+                      Dashboard
+                    </Button>
+                  </Link>
+                )}
+                <span className="text-white/90">Welcome, {profile?.full_name || user.email}</span>
               </div>
-              
-              <div className="relative">
-                <img 
-                  src={aiBrainHero} 
-                  alt="AI Brain with Lightning" 
-                  className="absolute top-0 right-0 w-32 h-18 opacity-30 z-0" 
-                />
-                <h2 className="text-5xl lg:text-7xl font-bold leading-tight relative z-10">
-                  <span className="font-tech bg-gradient-to-r from-purple-400 via-blue-400 to-yellow-400 bg-clip-text text-transparent">
-                    Smart Service
-                  </span>
-                  <span className="block luxury-text mt-2 font-sans">Connections 🧠⚡</span>
-                </h2>
-              </div>
-              
-              <p className="text-xl text-muted-foreground leading-relaxed">
-                Our AI instantly matches Florida customers with the perfect contractors. 
-                From emergency hurricane repairs to luxury renovations - intelligent connections, guaranteed results.
-              </p>
-            </div>
-
-            {/* Enhanced Service Grid */}
-            <div className="grid grid-cols-3 gap-4">
-              {[
-                { icon: "🏠", name: "Roofing", desc: "Emergency & planned" },
-                { icon: "❄️", name: "AC/HVAC", desc: "24/7 cooling experts" },
-                { icon: "🔧", name: "Plumbing", desc: "Emergency response" },
-                { icon: "⚡", name: "Electrical", desc: "Licensed & insured" },
-                { icon: "🏊", name: "Pool Service", desc: "Maintenance & repair" },
-                { icon: "🌿", name: "Landscaping", desc: "Design & maintenance" },
-                { icon: "🏗️", name: "Remodeling", desc: "Complete makeovers" },
-                { icon: "🧹", name: "Cleaning", desc: "Professional deep clean" },
-                { icon: "🪟", name: "Windows", desc: "Installation & repair" }
-              ].map((service, index) => (
-                <Card 
-                  key={index} 
-                  className="glass-card hover:shadow-luxury transition-all duration-300 hover:scale-105 cursor-pointer group relative overflow-hidden"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  <CardContent className="p-4 text-center relative z-10">
-                    <div className="text-2xl mb-2 group-hover:scale-110 transition-transform">
-                      {service.icon}
-                    </div>
-                    <div className="text-sm font-semibold mb-1">{service.name}</div>
-                    <div className="text-xs text-muted-foreground">{service.desc}</div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            {/* Premium Trust Signals */}
-            <div className="grid grid-cols-2 gap-4">
-              {[
-                { icon: Shield, text: "Licensed & Insured", desc: "All contractors verified" },
-                { icon: Clock, text: "24/7 Emergency", desc: "Hurricane response ready" },
-                { icon: Award, text: "5-Star Rated", desc: "Premium quality guaranteed" },
-                { icon: Zap, text: "Instant Connect", desc: "Response within hours" }
-              ].map((item, index) => (
-                <div key={index} className="flex items-center gap-3 p-3 rounded-lg glass-card">
-                  <item.icon className="h-5 w-5 text-primary" />
-                  <div>
-                    <div className="text-sm font-medium">{item.text}</div>
-                    <div className="text-xs text-muted-foreground">{item.desc}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Enhanced Social Proof */}
-            <Card className="glass-card">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="flex">
-                      {[1,2,3,4,5].map((star) => (
-                        <Star key={star} className="h-6 w-6 fill-yellow-400 text-yellow-400" />
-                      ))}
-                    </div>
-                    <div>
-                      <p className="text-lg font-bold">4.9/5 Excellence Rating</p>
-                      <p className="text-sm text-muted-foreground">Based on 15,000+ Florida reviews</p>
-                    </div>
-                  </div>
-                  <Globe className="h-8 w-8 text-primary float-animation" />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Premium Stats */}
-            <div className="grid grid-cols-3 gap-6">
-              {[
-                { icon: Users, value: "67K+", label: "Florida Customers", color: "text-blue-400" },
-                { icon: TrendingUp, value: "99.2%", label: "Success Rate", color: "text-green-400" },
-                { icon: DollarSign, value: "$12K+", label: "Avg. Savings", color: "text-yellow-400" }
-              ].map((stat, index) => (
-                <Card key={index} className="glass-card group hover:shadow-luxury transition-all duration-300">
-                  <CardContent className="p-6 text-center">
-                    <stat.icon className={`h-10 w-10 mx-auto mb-3 ${stat.color} group-hover:scale-110 transition-transform`} />
-                    <p className="text-3xl font-bold mb-1">{stat.value}</p>
-                    <p className="text-sm text-muted-foreground">{stat.label}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-
-          {/* Premium Lead Form */}
-          <Card className="sticky top-8 glass-card shadow-luxury luxury-enter border-2 border-primary/20">
-            <CardHeader className="text-center bg-gradient-to-r from-primary/15 to-accent/15 rounded-t-lg relative overflow-hidden">
-              <div className="absolute top-2 right-2">
-                <img src={brainIcon} alt="AI Brain" className="w-12 h-12 opacity-60" />
-              </div>
-              <CardTitle className="text-3xl font-tech bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
-                AI Smart Matching
-              </CardTitle>
-              <CardDescription className="text-lg text-muted-foreground">
-                Get connected with Florida's elite contractors instantly
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-8">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name" className="text-sm font-semibold">Full Name *</Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      required
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      placeholder="John Smith"
-                      className="h-12 glass-card border-primary/20 focus:border-primary"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phone" className="text-sm font-semibold">Phone Number *</Label>
-                    <Input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      required
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      placeholder="(954) 123-4567"
-                      className="h-12 glass-card border-primary/20 focus:border-primary"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-semibold">Email Address *</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    required
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    placeholder="john@example.com"
-                    className="h-12 glass-card border-primary/20 focus:border-primary"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="address" className="text-sm font-semibold">Florida Property Address *</Label>
-                  <Input
-                    id="address"
-                    name="address"
-                    required
-                    value={formData.address}
-                    onChange={handleInputChange}
-                    placeholder="123 Ocean Blvd, Miami, FL 33101"
-                    className="h-12 glass-card border-primary/20 focus:border-primary"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="serviceType" className="text-sm font-semibold">Service Needed *</Label>
-                  <select
-                    id="serviceType"
-                    name="serviceType"
-                    required
-                    value={formData.serviceType}
-                    onChange={handleInputChange}
-                    className="flex h-12 w-full rounded-md border border-primary/20 bg-card/50 backdrop-blur-sm px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                  >
-                    <option value="">Select premium service</option>
-                    <option value="Roofing">🏠 Roofing (Repair/Replace)</option>
-                    <option value="AC/HVAC">❄️ AC/HVAC (Premium Service)</option>
-                    <option value="Plumbing">🔧 Plumbing</option>
-                    <option value="Electrical">⚡ Electrical</option>
-                    <option value="Pool Service">🏊 Pool Service/Repair</option>
-                    <option value="Landscaping">🌿 Landscaping/Tree Service</option>
-                    <option value="Home Remodeling">🏗️ Premium Remodeling</option>
-                    <option value="Cleaning Services">🧹 Professional Cleaning</option>
-                    <option value="Windows/Doors">🪟 Windows/Doors</option>
-                    <option value="Solar">☀️ Solar Installation</option>
-                    <option value="Hurricane Prep">🌪️ Hurricane Preparation</option>
-                  </select>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="urgency" className="text-sm font-semibold">Timeline *</Label>
-                    <select
-                      id="urgency"
-                      name="urgency"
-                      required
-                      value={formData.urgency}
-                      onChange={handleInputChange}
-                      className="flex h-12 w-full rounded-md border border-primary/20 bg-card/50 backdrop-blur-sm px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                    >
-                      <option value="">Select timeline</option>
-                      <option value="Emergency">🚨 Emergency (ASAP)</option>
-                      <option value="1-week">⚡ Within 1 week</option>
-                      <option value="1-month">📅 Within 1 month</option>
-                      <option value="3-months">🗓️ Within 3 months</option>
-                      <option value="planning">💭 Planning phase</option>
-                    </select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="budget" className="text-sm font-semibold">Investment Range</Label>
-                    <select
-                      id="budget"
-                      name="budget"
-                      value={formData.budget}
-                      onChange={handleInputChange}
-                      className="flex h-12 w-full rounded-md border border-primary/20 bg-card/50 backdrop-blur-sm px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                    >
-                      <option value="">Select budget</option>
-                      <option value="Under $1,000">Under $1,000</option>
-                      <option value="$1,000 - $5,000">$1,000 - $5,000</option>
-                      <option value="$5,000 - $15,000">$5,000 - $15,000</option>
-                      <option value="$15,000 - $50,000">$15,000 - $50,000</option>
-                      <option value="Over $50,000">Over $50,000</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="description" className="text-sm font-semibold">Project Details</Label>
-                  <Textarea
-                    id="description"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    placeholder="Describe your project, any specific requirements, damage details, or preferences..."
-                    className="min-h-[100px] glass-card border-primary/20 focus:border-primary"
-                  />
-                </div>
-
-                <Button 
-                  type="submit" 
-                  disabled={isSubmitting}
-                  className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-luxury transition-all duration-300 hover:scale-[1.02] disabled:opacity-50"
-                >
-                  {isSubmitting ? "🔄 Capturing Lead..." : "Get Premium Florida Quotes Now! ✨"}
+            ) : (
+              <Link to="/auth">
+                <Button variant="secondary" size="sm" className="flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  Sign In
                 </Button>
-
-                <p className="text-xs text-muted-foreground text-center leading-relaxed">
-                  By submitting, you agree to be contacted by up to 3 pre-screened, premium Florida contractors. 
-                  No spam - only quality quotes from licensed professionals.
-                </p>
-              </form>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Enhanced Business Model Section */}
-        <Card className="mt-16 glass-card border-green-500/20 bg-gradient-to-r from-green-500/5 to-emerald-500/5">
-          <CardHeader>
-            <CardTitle className="text-3xl text-center">
-              <span className="luxury-text">💰 Your Premium Revenue Model</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-4 gap-6">
-              {[
-                {
-                  title: "1. Capture Premium Leads",
-                  desc: "Collect high-intent leads across 15+ Florida service categories with complete project details and urgency indicators.",
-                  icon: "📊"
-                },
-                {
-                  title: "2. Sell to Multiple Contractors", 
-                  desc: "Sell each lead to 3-5 contractors. Emergency AC: $200+, Hurricane roofing: $300+, Pool repairs: $100+.",
-                  icon: "💼"
-                },
-                {
-                  title: "3. Target High-Value Services",
-                  desc: "Focus on hurricane damage, emergency AC, luxury remodeling, and pool services - Florida's premium niches.",
-                  icon: "🎯"
-                },
-                {
-                  title: "4. Scale Statewide",
-                  desc: "Expand across 67 Florida counties: Miami-Dade, Broward, Orange, Hillsborough, Duval, and beyond.",
-                  icon: "🌴"
-                }
-              ].map((item, index) => (
-                <div key={index} className="text-center space-y-3">
-                  <div className="text-4xl mb-3">{item.icon}</div>
-                  <h4 className="font-bold text-lg text-emerald-400">{item.title}</h4>
-                  <p className="text-sm text-emerald-300/80 leading-relaxed">{item.desc}</p>
-                </div>
-              ))}
-            </div>
-            
-            <div className="mt-8 p-6 bg-gradient-to-r from-emerald-500/10 to-green-500/10 rounded-xl border border-emerald-500/20">
-              <div className="text-center">
-                <p className="text-emerald-400 font-bold text-xl mb-2">🚀 Florida Advantage</p>
-                <p className="text-emerald-300 leading-relaxed">
-                  Year-round construction + hurricane season + 22 million residents + premium tourism market = 
-                  massive lead demand. Emergency services command 2-3x premium pricing!
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Compelling Worker Images Section */}
-        <div className="mt-16 space-y-8">
-          <div className="text-center space-y-4">
-            <h3 className="text-4xl font-bold luxury-text">Meet Florida's Elite Contractors</h3>
-            <p className="text-xl text-muted-foreground">Real professionals, real results, real expertise you can trust</p>
+              </Link>
+            )}
           </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card className="glass-card group hover:shadow-luxury transition-all duration-500 hover:scale-[1.02] overflow-hidden">
-              <div className="relative">
-                <img 
-                  src={floridaRoofer} 
-                  alt="Professional Florida roofer at work" 
-                  className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-                <div className="absolute bottom-4 left-4 text-white">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                    <span className="text-sm font-semibold">EMERGENCY READY</span>
-                  </div>
-                  <h4 className="text-xl font-bold">🏠 Roofing Experts</h4>
-                  <p className="text-sm text-gray-200">Hurricane damage specialists</p>
-                </div>
-              </div>
-              <CardContent className="p-6">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Response Time:</span>
-                    <span className="font-semibold text-green-400">30-60 minutes</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Lead Value:</span>
-                    <span className="font-semibold text-primary">$300-600</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span className="text-sm font-semibold">4.9/5 Rating (850+ jobs)</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+        </nav>
 
-            <Card className="glass-card group hover:shadow-luxury transition-all duration-500 hover:scale-[1.02] overflow-hidden">
-              <div className="relative">
-                <img 
-                  src={floridaHvac} 
-                  alt="Professional HVAC technician in Florida" 
-                  className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-                <div className="absolute bottom-4 left-4 text-white">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
-                    <span className="text-sm font-semibold">24/7 SERVICE</span>
-                  </div>
-                  <h4 className="text-xl font-bold">❄️ HVAC Masters</h4>
-                  <p className="text-sm text-gray-200">Florida heat specialists</p>
-                </div>
-              </div>
-              <CardContent className="p-6">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Response Time:</span>
-                    <span className="font-semibold text-blue-400">1-2 hours</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Lead Value:</span>
-                    <span className="font-semibold text-primary">$250-450</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span className="text-sm font-semibold">4.8/5 Rating (1,200+ jobs)</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+        {/* Hero Content */}
+        <div className="flex-1 container mx-auto px-6 flex items-center relative z-10">
+          <div className="max-w-4xl mx-auto text-center text-white">
+            <h1 className="text-6xl md:text-7xl font-bold mb-6 leading-tight">
+              Florida's Premier
+              <span className="block bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
+                Service Network
+              </span>
+            </h1>
+            <p className="text-xl mb-8 text-white/90 leading-relaxed">
+              Connect with verified contractors across all 67 Florida counties. Get estimates when available for roofing, HVAC, plumbing, and more.
+            </p>
+            
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+              <Button
+                onClick={() => setIsChatOpen(true)}
+                size="lg"
+                className="bg-white text-primary hover:bg-white/90 text-lg px-8 py-6 rounded-xl shadow-luxury"
+              >
+                <MessageCircle className="mr-2 h-5 w-5" />
+                Get Instant Help
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-white text-white hover:bg-white hover:text-primary text-lg px-8 py-6 rounded-xl"
+              >
+                <Phone className="mr-2 h-5 w-5" />
+                Call Now: (941) 253-8936
+              </Button>
+            </div>
 
-            <Card className="glass-card group hover:shadow-luxury transition-all duration-500 hover:scale-[1.02] overflow-hidden">
-              <div className="relative">
-                <img 
-                  src={floridaPlumber} 
-                  alt="Professional plumber working in Florida" 
-                  className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-                <div className="absolute bottom-4 left-4 text-white">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-3 h-3 bg-cyan-400 rounded-full animate-pulse"></div>
-                    <span className="text-sm font-semibold">WATER EMERGENCY</span>
-                  </div>
-                  <h4 className="text-xl font-bold">🔧 Plumbing Pros</h4>
-                  <p className="text-sm text-gray-200">Water damage prevention</p>
-                </div>
+            {/* Quick Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
+              <div className="glass-card p-6 text-center bg-white/10 backdrop-blur-md border border-white/20 rounded-xl">
+                <div className="text-3xl font-bold mb-2">67</div>
+                <div className="text-white/80">Florida Counties</div>
               </div>
-              <CardContent className="p-6">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Response Time:</span>
-                    <span className="font-semibold text-cyan-400">45-90 minutes</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Lead Value:</span>
-                    <span className="font-semibold text-primary">$200-400</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span className="text-sm font-semibold">4.9/5 Rating (950+ jobs)</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+              <div className="glass-card p-6 text-center bg-white/10 backdrop-blur-md border border-white/20 rounded-xl">
+                <div className="text-3xl font-bold mb-2">24/7</div>
+                <div className="text-white/80">Emergency Service</div>
+              </div>
+              <div className="glass-card p-6 text-center bg-white/10 backdrop-blur-md border border-white/20 rounded-xl">
+                <div className="text-3xl font-bold mb-2">5★</div>
+                <div className="text-white/80">Average Rating</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Services Section */}
+      <section id="services" className="py-20 container mx-auto px-6">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold mb-4">Professional Services</h2>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            From emergency repairs to planned renovations, our network of licensed contractors covers all your needs
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {services.map((service, index) => (
+            <div key={index} className="glass-card p-6 rounded-xl border border-primary/20 hover:shadow-luxury transition-all duration-300 hover:scale-105 group">
+              <div className="flex items-start justify-between mb-4">
+                <div className="text-4xl mb-2 group-hover:scale-110 transition-transform">
+                  {service.icon}
+                </div>
+                <div className="flex gap-2">
+                  {service.urgent && <Badge variant="destructive" className="text-xs">URGENT</Badge>}
+                  {service.popular && <Badge variant="secondary" className="text-xs">POPULAR</Badge>}
+                </div>
+              </div>
+              <h3 className="text-xl font-semibold mb-2">{service.name}</h3>
+              <p className="text-muted-foreground mb-4">{service.description}</p>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-primary">{service.price}</span>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setIsChatOpen(true)}
+                  className="hover:bg-primary hover:text-white"
+                >
+                  Get Quote
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Trust Signals */}
+      <section className="py-16 bg-gradient-to-r from-primary/5 to-accent/5">
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {trustSignals.map((item, index) => (
+              <div key={index} className="flex flex-col items-center text-center p-6 glass-card rounded-xl">
+                <item.icon className="h-12 w-12 text-primary mb-4" />
+                <h4 className="font-semibold mb-2">{item.text}</h4>
+                <p className="text-sm text-muted-foreground">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Contractors */}
+      <section id="about" className="py-20 container mx-auto px-6">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold mb-4">Meet Florida's Elite Contractors</h2>
+          <p className="text-xl text-muted-foreground">
+            Real professionals, real results, real expertise you can trust
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8">
+          {[
+            { 
+              img: floridaRooferActionImg, 
+              title: "🏠 Roofing Experts", 
+              desc: "Hurricane damage specialists",
+              response: "30-60 minutes",
+              rating: "4.9/5 (850+ jobs)"
+            },
+            { 
+              img: floridaHVACExpertImg, 
+              title: "❄️ HVAC Masters", 
+              desc: "Florida heat specialists",
+              response: "1-2 hours", 
+              rating: "4.8/5 (1,200+ jobs)"
+            },
+            { 
+              img: floridaPlumberWorkImg, 
+              title: "🔧 Plumbing Pros", 
+              desc: "Water damage prevention",
+              response: "45-90 minutes",
+              rating: "4.9/5 (950+ jobs)"
+            }
+          ].map((contractor, index) => (
+            <div key={index} className="glass-card rounded-xl overflow-hidden hover:shadow-luxury transition-all duration-300 hover:scale-105 group">
+              <div className="relative">
+                <img 
+                  src={contractor.img} 
+                  alt={contractor.title}
+                  className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                <div className="absolute bottom-4 left-4 text-white">
+                  <h4 className="text-xl font-bold">{contractor.title}</h4>
+                  <p className="text-sm text-gray-200">{contractor.desc}</p>
+                </div>
+              </div>
+              <div className="p-6 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Response Time:</span>
+                  <span className="font-semibold text-primary">{contractor.response}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  <span className="text-sm font-semibold">{contractor.rating}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section id="contact" className="py-20 bg-gradient-to-r from-primary/10 to-accent/10">
+        <div className="container mx-auto px-6 text-center">
+          <h2 className="text-4xl font-bold mb-8">Ready to Connect?</h2>
+          <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto">
+            Get started with Florida's premier contractor network. Fast, reliable, professional service across all 67 counties.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button
+              onClick={() => setIsChatOpen(true)}
+              size="lg"
+              className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-lg px-8 py-6 rounded-xl shadow-luxury"
+            >
+              <MessageCircle className="mr-2 h-5 w-5" />
+              Start AI Chat
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="text-lg px-8 py-6 rounded-xl border-primary text-primary hover:bg-primary hover:text-white"
+            >
+              <MapPin className="mr-2 h-5 w-5" />
+              Find Local Contractors
+            </Button>
+          </div>
+
+          <div className="mt-12 flex items-center justify-center gap-8 text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <Phone className="h-4 w-4" />
+              <span>(941) 253-8936</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span>✉️</span>
+              <span>cleanasawhistle1000@gmail.com</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Floating Chat Button */}
       {!isChatOpen && (
