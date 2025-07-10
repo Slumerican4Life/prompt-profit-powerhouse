@@ -62,7 +62,7 @@ const Index = () => {
               <Brain className="h-6 w-6 text-white" />
             </div>
             <span className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              FloridaServiceConnect
+              Florida Service Leads
             </span>
           </div>
           <div className="hidden md:flex items-center space-x-6">
