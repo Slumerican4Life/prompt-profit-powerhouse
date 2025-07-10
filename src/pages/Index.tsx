@@ -62,7 +62,7 @@ const Index = () => {
               <Brain className="h-6 w-6 text-white" />
             </div>
             <span className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Florida Service Leads
+              FloridaServiceConnect
             </span>
           </div>
           <div className="hidden md:flex items-center space-x-6">
@@ -106,11 +106,11 @@ const Index = () => {
                 alt="AI Brain" 
                 className="absolute top-0 right-0 w-24 h-24 opacity-40 animate-pulse" 
               />
-              <h1 className="text-6xl md:text-8xl font-bold leading-tight relative z-10 animate-none">
-                <span className="font-tech bg-gradient-to-r from-purple-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent animate-none">
+              <h1 className="text-6xl md:text-8xl font-bold leading-tight relative z-10">
+                <span className="font-tech bg-gradient-to-r from-purple-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent">
                   Smart Florida
                 </span>
-                <span className="block bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mt-2 animate-none">
+                <span className="block bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mt-2">
                   Service Network 🧠⚡
                 </span>
               </h1>
