@@ -42,7 +42,7 @@ const Index = () => {
         <img 
           src={aiBrainHero} 
           alt="AI Brain Hero" 
-          className="absolute top-0 right-0 w-64 h-64 object-cover opacity-30 rounded-bl-3xl animate-pulse"
+          className="absolute top-0 right-0 w-64 h-64 object-cover opacity-30 rounded-bl-3xl"
         />
         <img 
           src={floridaPalmCornerImg} 
@@ -52,7 +52,7 @@ const Index = () => {
         <img 
           src={detailedNeonBrain} 
           alt="Neon Brain" 
-          className="absolute bottom-20 left-10 w-32 h-32 object-cover opacity-20 rounded-full animate-pulse"
+          className="absolute bottom-20 left-10 w-32 h-32 object-cover opacity-20 rounded-full"
         />
 
         {/* Navigation */}
@@ -104,7 +104,7 @@ const Index = () => {
               <img 
                 src={brainIcon} 
                 alt="AI Brain" 
-                className="absolute top-0 right-0 w-24 h-24 opacity-40 animate-pulse" 
+                className="absolute top-0 right-0 w-24 h-24 opacity-40" 
               />
               <h1 className="text-6xl md:text-8xl font-bold leading-tight relative z-10">
                 <span className="font-tech bg-gradient-to-r from-purple-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent">
@@ -169,7 +169,7 @@ const Index = () => {
         <img 
           src={detailedNeonBrain} 
           alt="Background brain" 
-          className="absolute top-10 right-10 w-48 h-48 opacity-10 animate-pulse"
+          className="absolute top-10 right-10 w-48 h-48 opacity-10"
         />
         
         <div className="text-center mb-16 relative z-10">
@@ -335,7 +335,7 @@ const Index = () => {
       {!isChatOpen && (
         <Button
           onClick={() => setIsChatOpen(true)}
-          className="fixed bottom-6 right-6 w-16 h-16 rounded-full shadow-luxury glow-pulse z-40 bg-gradient-to-r from-primary to-accent"
+          className="fixed bottom-6 right-6 w-16 h-16 rounded-full shadow-luxury z-40 bg-gradient-to-r from-primary to-accent hover:scale-105 transition-transform"
           size="lg"
         >
           <MessageCircle className="h-6 w-6" />
