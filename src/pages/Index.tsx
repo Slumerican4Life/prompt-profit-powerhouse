@@ -106,11 +106,11 @@ const Index = () => {
                 alt="AI Brain" 
                 className="absolute top-0 right-0 w-24 h-24 opacity-40 animate-pulse" 
               />
-              <h1 className="text-6xl md:text-8xl font-bold leading-tight relative z-10">
-                <span className="font-tech bg-gradient-to-r from-purple-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent">
+              <h1 className="text-6xl md:text-8xl font-bold leading-tight relative z-10 animate-none">
+                <span className="font-tech bg-gradient-to-r from-purple-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent animate-none">
                   Smart Florida
                 </span>
-                <span className="block bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mt-2">
+                <span className="block bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mt-2 animate-none">
                   Service Network 🧠⚡
                 </span>
               </h1>
