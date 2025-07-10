@@ -5,8 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle, Star, Phone, Mail, MapPin, DollarSign, TrendingUp, Users, MessageCircle, Shield, Clock, Award, Zap, Globe } from "lucide-react";
+import { CheckCircle, Star, Phone, Mail, MapPin, DollarSign, TrendingUp, Users, MessageCircle, Shield, Clock, Award, Zap, Globe, Brain, BrainCircuit } from "lucide-react";
 import { LiveChat } from "@/components/LiveChat";
+import aiBrainHero from "@/assets/ai-brain-hero.jpg";
+import brainIcon from "@/assets/brain-icon.jpg";
 
 const Index = () => {
   const [formData, setFormData] = useState({
@@ -119,11 +121,11 @@ const Index = () => {
             <div className="flex items-center gap-6 text-sm">
               <div className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
                 <Phone className="h-4 w-4" />
-                <span className="font-medium">(954) 555-LEADS</span>
+                <span className="font-medium">(941) 253-8936</span>
               </div>
               <div className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
                 <Mail className="h-4 w-4" />
-                <span className="font-medium">info@floridaserviceleads.com</span>
+                <span className="font-medium">cleanasawhistle1000@gmail.com</span>
               </div>
             </div>
           </div>
@@ -134,46 +136,56 @@ const Index = () => {
         <div className="grid lg:grid-cols-2 gap-12 items-start">
           {/* Enhanced Hero Section */}
           <div className="space-y-8 luxury-enter">
-            <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-2 text-sm font-medium text-primary">
-                <Star className="h-4 w-4" />
-                Florida's #1 Service Lead Platform
+            <div className="space-y-8">
+              <div className="inline-flex items-center gap-3 bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 rounded-full px-6 py-3 text-sm font-medium text-primary backdrop-blur-sm">
+                <BrainCircuit className="h-5 w-5" />
+                <span className="font-tech">AI-Powered Lead Matching</span>
               </div>
               
-              <h2 className="text-5xl lg:text-6xl font-bold leading-tight">
-                Premium Home Services
-                <span className="block luxury-text mt-2">Across Florida 🏖️</span>
-              </h2>
+              <div className="relative">
+                <img 
+                  src={aiBrainHero} 
+                  alt="AI Brain with Lightning" 
+                  className="absolute top-0 right-0 w-32 h-18 opacity-30 z-0" 
+                />
+                <h2 className="text-5xl lg:text-7xl font-bold leading-tight relative z-10">
+                  <span className="font-tech bg-gradient-to-r from-purple-400 via-blue-400 to-yellow-400 bg-clip-text text-transparent">
+                    Smart Service
+                  </span>
+                  <span className="block luxury-text mt-2 font-sans">Connections 🧠⚡</span>
+                </h2>
+              </div>
               
               <p className="text-xl text-muted-foreground leading-relaxed">
-                Connect with Florida's most trusted, licensed contractors. From Miami to Jacksonville, 
-                get instant access to premium service professionals in your area.
+                Our AI instantly matches Florida customers with the perfect contractors. 
+                From emergency hurricane repairs to luxury renovations - intelligent connections, guaranteed results.
               </p>
             </div>
 
             {/* Enhanced Service Grid */}
             <div className="grid grid-cols-3 gap-4">
               {[
-                { icon: "🏠", name: "Roofing", price: "$150-300" },
-                { icon: "❄️", name: "AC/HVAC", price: "$100-250" },
-                { icon: "🔧", name: "Plumbing", price: "$75-150" },
-                { icon: "⚡", name: "Electrical", price: "$100-200" },
-                { icon: "🏊", name: "Pool Service", price: "$75-150" },
-                { icon: "🌿", name: "Landscaping", price: "$50-125" },
-                { icon: "🏗️", name: "Remodeling", price: "$200-400" },
-                { icon: "🧹", name: "Cleaning", price: "$25-75" },
-                { icon: "🪟", name: "Windows", price: "$75-150" }
+                { icon: "🏠", name: "Roofing", desc: "Emergency & planned" },
+                { icon: "❄️", name: "AC/HVAC", desc: "24/7 cooling experts" },
+                { icon: "🔧", name: "Plumbing", desc: "Emergency response" },
+                { icon: "⚡", name: "Electrical", desc: "Licensed & insured" },
+                { icon: "🏊", name: "Pool Service", desc: "Maintenance & repair" },
+                { icon: "🌿", name: "Landscaping", desc: "Design & maintenance" },
+                { icon: "🏗️", name: "Remodeling", desc: "Complete makeovers" },
+                { icon: "🧹", name: "Cleaning", desc: "Professional deep clean" },
+                { icon: "🪟", name: "Windows", desc: "Installation & repair" }
               ].map((service, index) => (
                 <Card 
                   key={index} 
-                  className="glass-card hover:shadow-luxury transition-all duration-300 hover:scale-105 cursor-pointer group"
+                  className="glass-card hover:shadow-luxury transition-all duration-300 hover:scale-105 cursor-pointer group relative overflow-hidden"
                 >
-                  <CardContent className="p-4 text-center">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <CardContent className="p-4 text-center relative z-10">
                     <div className="text-2xl mb-2 group-hover:scale-110 transition-transform">
                       {service.icon}
                     </div>
-                    <div className="text-sm font-medium">{service.name}</div>
-                    <div className="text-xs text-primary font-semibold">{service.price}</div>
+                    <div className="text-sm font-semibold mb-1">{service.name}</div>
+                    <div className="text-xs text-muted-foreground">{service.desc}</div>
                   </CardContent>
                 </Card>
               ))}
@@ -236,11 +248,16 @@ const Index = () => {
           </div>
 
           {/* Premium Lead Form */}
-          <Card className="sticky top-8 glass-card shadow-luxury luxury-enter">
-            <CardHeader className="text-center bg-gradient-to-r from-primary/10 to-accent/10 rounded-t-lg">
-              <CardTitle className="text-3xl luxury-text">Get Premium Quotes</CardTitle>
-              <CardDescription className="text-lg">
-                Connect with Florida's top-rated contractors in minutes
+          <Card className="sticky top-8 glass-card shadow-luxury luxury-enter border-2 border-primary/20">
+            <CardHeader className="text-center bg-gradient-to-r from-primary/15 to-accent/15 rounded-t-lg relative overflow-hidden">
+              <div className="absolute top-2 right-2">
+                <img src={brainIcon} alt="AI Brain" className="w-12 h-12 opacity-60" />
+              </div>
+              <CardTitle className="text-3xl font-tech bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+                AI Smart Matching
+              </CardTitle>
+              <CardDescription className="text-lg text-muted-foreground">
+                Get connected with Florida's elite contractors instantly
               </CardDescription>
             </CardHeader>
             <CardContent className="p-8">
