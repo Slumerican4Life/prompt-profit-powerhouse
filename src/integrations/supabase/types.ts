@@ -14,7 +14,111 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      leads: {
+        Row: {
+          budget: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          lead_value: number | null
+          phone: string
+          project_description: string | null
+          property_address: string | null
+          service_needed: string
+          timeline: string | null
+          updated_at: string
+          urgency_level: string | null
+        }
+        Insert: {
+          budget?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          lead_value?: number | null
+          phone: string
+          project_description?: string | null
+          property_address?: string | null
+          service_needed: string
+          timeline?: string | null
+          updated_at?: string
+          urgency_level?: string | null
+        }
+        Update: {
+          budget?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          lead_value?: number | null
+          phone?: string
+          project_description?: string | null
+          property_address?: string | null
+          service_needed?: string
+          timeline?: string | null
+          updated_at?: string
+          urgency_level?: string | null
+        }
+        Relationships: []
+      }
+      services: {
+        Row: {
+          active: boolean | null
+          category: string | null
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          price_estimate: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          price_estimate?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          price_estimate?: string | null
+        }
+        Relationships: []
+      }
+      users: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          role: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          role?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          role?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

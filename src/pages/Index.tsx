@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { CheckCircle, Star, Phone, Mail, MapPin, DollarSign, TrendingUp, Users, MessageCircle, Shield, Clock, Award, Zap, Globe, Brain, BrainCircuit } from "lucide-react";
 import { LiveChat } from "@/components/LiveChat";
+import { supabase } from "@/integrations/supabase/client";
 import aiBrainHero from "@/assets/ai-brain-hero.jpg";
 import brainIcon from "@/assets/brain-icon.jpg";
 
@@ -23,44 +24,91 @@ const Index = () => {
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [services, setServices] = useState<any[]>([]);
   const { toast } = useToast();
+
+  // Load services from Supabase
+  useEffect(() => {
+    const loadServices = async () => {
+      const { data, error } = await supabase
+        .from('services')
+        .select('*')
+        .eq('active', true)
+        .order('name');
+      
+      if (data && !error) {
+        setServices(data);
+      }
+    };
+    
+    loadServices();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Google Sheets Integration
-    const googleSheetsUrl = "https://script.google.com/macros/s/YOUR_GOOGLE_SCRIPT_ID/exec";
+    setIsSubmitting(true);
     
     try {
-      // Send to Google Sheets
-      await fetch(googleSheetsUrl, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...formData,
-          timestamp: new Date().toISOString(),
-          leadValue: formData.urgency === 'Emergency' ? '$300-500' : '$150-300'
-        })
-      });
+      // Calculate lead value based on urgency and service type
+      const calculateLeadValue = () => {
+        const emergencyMultiplier = formData.urgency === 'Emergency' ? 1.5 : 1;
+        const serviceValues: { [key: string]: number } = {
+          'Roofing': 400,
+          'AC/HVAC': 300,
+          'Plumbing': 250,
+          'Electrical': 350,
+          'Pool Service': 200,
+          'Landscaping': 250,
+          'Home Remodeling': 500,
+          'Cleaning Services': 150,
+          'Windows/Doors': 300,
+          'Solar': 600,
+          'Hurricane Prep': 450
+        };
+        
+        const baseValue = serviceValues[formData.serviceType] || 200;
+        return Math.round(baseValue * emergencyMultiplier);
+      };
 
-      console.log("Lead captured and sent to Google Sheets:", formData);
+      // Insert lead into Supabase
+      const { data, error } = await supabase
+        .from('leads')
+        .insert({
+          full_name: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+          service_needed: formData.serviceType,
+          timeline: formData.urgency,
+          budget: formData.budget,
+          property_address: formData.address,
+          project_description: formData.description,
+          urgency_level: formData.urgency,
+          lead_value: calculateLeadValue()
+        })
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      console.log("Lead captured successfully:", data);
       
       setIsSubmitted(true);
       toast({
-        title: "Lead Captured Successfully!",
-        description: `High-value ${formData.serviceType || 'service'} lead ready for sale - $75-400 value`,
+        title: "🎯 Premium Lead Captured!",
+        description: `High-value ${formData.serviceType} lead worth $${calculateLeadValue()} captured and ready for contractor network!`,
       });
     } catch (error) {
-      console.error("Error sending to Google Sheets:", error);
-      // Still show success to user
-      setIsSubmitted(true);
+      console.error("Error capturing lead:", error);
       toast({
-        title: "Lead Captured Successfully!",
-        description: `High-value ${formData.serviceType || 'service'} lead ready for sale - $75-400 value`,
+        title: "Error",
+        description: "There was an issue capturing your lead. Please try again.",
+        variant: "destructive"
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -395,9 +443,10 @@ const Index = () => {
 
                 <Button 
                   type="submit" 
-                  className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-luxury transition-all duration-300 hover:scale-[1.02]"
+                  disabled={isSubmitting}
+                  className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-luxury transition-all duration-300 hover:scale-[1.02] disabled:opacity-50"
                 >
-                  Get Premium Florida Quotes Now! ✨
+                  {isSubmitting ? "🔄 Capturing Lead..." : "Get Premium Florida Quotes Now! ✨"}
                 </Button>
 
                 <p className="text-xs text-muted-foreground text-center leading-relaxed">
