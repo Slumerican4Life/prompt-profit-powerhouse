@@ -256,25 +256,8 @@ export function LiveChat({ isOpen, onClose }: LiveChatProps) {
             </TabsList>
 
             <TabsContent value="chat" className="p-4 m-0">
-              {/* Quick Action Buttons */}
-              <div className="grid grid-cols-2 gap-2 mb-4">
-                {quickActions.map((action) => (
-                  <Button
-                    key={action.value}
-                    variant="outline"
-                    size="sm"
-                    className={`text-xs ${action.urgent ? 'border-red-500/50 hover:bg-red-500/10' : action.popular ? 'border-primary/50 hover:bg-primary/10' : ''}`}
-                    onClick={() => handleQuickAction(action.value)}
-                  >
-                    {action.label}
-                    {action.urgent && <Badge variant="destructive" className="ml-1 text-xs">URGENT</Badge>}
-                    {action.popular && <Badge variant="secondary" className="ml-1 text-xs">POPULAR</Badge>}
-                  </Button>
-                ))}
-              </div>
-
               {/* Chat Messages */}
-              <div className="h-64 overflow-y-auto space-y-3 mb-4 bg-secondary/10 rounded-lg p-3">
+              <div className="h-80 overflow-y-auto space-y-3 mb-4 bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-lg p-4">
                 {messages.map((message, index) => (
                   <div
                     key={index}
@@ -282,23 +265,23 @@ export function LiveChat({ isOpen, onClose }: LiveChatProps) {
                   >
                     <div className={`flex items-start gap-2 max-w-[85%]`}>
                       {message.type === 'bot' && (
-                        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center mt-1">
+                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center mt-1 flex-shrink-0">
                           <Bot className="h-3 w-3 text-white" />
                         </div>
                       )}
                       <div
-                        className={`p-3 rounded-xl ${
+                        className={`p-3 rounded-xl border-2 ${
                           message.type === 'user'
-                            ? 'bg-gradient-to-r from-primary to-accent text-white rounded-br-md'
-                            : 'bg-white/80 text-foreground border border-border/50 rounded-bl-md'
+                            ? 'bg-blue-600 text-white border-blue-600 rounded-br-md shadow-sm'
+                            : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 border-slate-300 dark:border-slate-600 rounded-bl-md shadow-sm'
                         }`}
                       >
-                        <p className="text-sm leading-relaxed">{message.text}</p>
-                        <p className="text-xs opacity-70 mt-1">{message.time}</p>
+                        <p className="text-sm leading-relaxed font-medium">{message.text}</p>
+                        <p className="text-xs opacity-70 mt-1 font-normal">{message.time}</p>
                       </div>
                       {message.type === 'user' && (
-                        <div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center mt-1">
-                          <User className="h-3 w-3 text-muted-foreground" />
+                        <div className="w-6 h-6 rounded-full bg-slate-300 dark:bg-slate-600 border-2 border-slate-400 dark:border-slate-500 flex items-center justify-center mt-1 flex-shrink-0">
+                          <User className="h-3 w-3 text-slate-700 dark:text-slate-300" />
                         </div>
                       )}
                     </div>
@@ -307,14 +290,14 @@ export function LiveChat({ isOpen, onClose }: LiveChatProps) {
                 {isTyping && (
                   <div className="flex justify-start">
                     <div className="flex items-start gap-2">
-                      <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                      <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
                         <Bot className="h-3 w-3 text-white" />
                       </div>
-                      <div className="bg-white/80 p-3 rounded-xl rounded-bl-md border border-border/50">
+                      <div className="bg-white dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-600 p-3 rounded-xl rounded-bl-md shadow-sm">
                         <div className="flex space-x-1">
-                          <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
-                          <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                          <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                          <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
+                          <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                          <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
                         </div>
                       </div>
                     </div>
@@ -327,14 +310,14 @@ export function LiveChat({ isOpen, onClose }: LiveChatProps) {
                 <Input
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
-                  placeholder="Ask about any Florida service..."
+                  placeholder="Tell me what service you need help with..."
                   onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                  className="flex-1 glass-card border-primary/20"
+                  className="flex-1 border-2 border-slate-300 dark:border-slate-600 focus:border-blue-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
                 />
                 <Button 
                   onClick={handleSendMessage} 
                   size="sm" 
-                  className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
+                  className="bg-blue-600 hover:bg-blue-700 text-white border-2 border-blue-600"
                 >
                   <Send className="h-4 w-4" />
                 </Button>
