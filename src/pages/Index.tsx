@@ -2,9 +2,12 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Phone, MapPin, Clock, Star, Shield, Zap, Award, CheckCircle, Home, User, Settings } from "lucide-react";
+import { MessageCircle, Phone, MapPin, Clock, Star, Shield, Zap, Award, CheckCircle, Home, User, Settings, Brain, BrainCircuit } from "lucide-react";
 import { LiveChat } from "@/components/LiveChat";
 import { useAuth } from "@/hooks/useAuth";
+import aiBrainHero from "@/assets/ai-brain-hero.jpg";
+import brainIcon from "@/assets/brain-icon.jpg";
+import detailedNeonBrain from "@/assets/detailed-neon-brain.jpg";
 import floridaHVACExpertImg from "@/assets/florida-hvac-expert.jpg";
 import floridaPlumberWorkImg from "@/assets/florida-plumber-work.jpg";
 import floridaRooferActionImg from "@/assets/florida-roofer-action.jpg";
@@ -34,44 +37,53 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-accent/10">
       {/* Hero Section with Navigation */}
-      <div className="relative bg-gradient-to-r from-primary via-primary to-accent min-h-[80vh] flex flex-col">
-        {/* Decorative corner images */}
+      <div className="relative bg-gradient-to-br from-primary/20 via-background to-accent/20 min-h-[80vh] flex flex-col overflow-hidden">
+        {/* Decorative brain and palm images */}
         <img 
-          src={floridaOakCornerImg} 
-          alt="Florida scenery" 
-          className="absolute top-0 left-0 w-32 h-32 object-cover opacity-20 rounded-br-3xl"
+          src={aiBrainHero} 
+          alt="AI Brain Hero" 
+          className="absolute top-0 right-0 w-64 h-64 object-cover opacity-30 rounded-bl-3xl animate-pulse"
         />
         <img 
           src={floridaPalmCornerImg} 
           alt="Florida palms" 
-          className="absolute top-0 right-0 w-32 h-32 object-cover opacity-20 rounded-bl-3xl"
+          className="absolute top-0 left-0 w-48 h-48 object-cover opacity-40 rounded-br-3xl"
+        />
+        <img 
+          src={detailedNeonBrain} 
+          alt="Neon Brain" 
+          className="absolute bottom-20 left-10 w-32 h-32 object-cover opacity-20 rounded-full animate-pulse"
         />
 
         {/* Navigation */}
         <nav className="container mx-auto px-6 py-4 flex items-center justify-between relative z-10">
-          <div className="flex items-center space-x-2">
-            <Home className="h-8 w-8 text-white" />
-            <span className="text-xl font-bold text-white">FloridaServiceConnect</span>
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+              <Brain className="h-6 w-6 text-white" />
+            </div>
+            <span className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              FloridaServiceConnect
+            </span>
           </div>
           <div className="hidden md:flex items-center space-x-6">
-            <a href="#services" className="text-white/90 hover:text-white transition-colors">Services</a>
-            <a href="#about" className="text-white/90 hover:text-white transition-colors">About</a>
-            <a href="#contact" className="text-white/90 hover:text-white transition-colors">Contact</a>
+            <a href="#services" className="text-muted-foreground hover:text-primary transition-colors font-medium">Services</a>
+            <a href="#about" className="text-muted-foreground hover:text-primary transition-colors font-medium">About</a>
+            <a href="#contact" className="text-muted-foreground hover:text-primary transition-colors font-medium">Contact</a>
             {user ? (
               <div className="flex items-center gap-3">
                 {(profile?.role === 'owner' || profile?.role === 'manager') && (
                   <Link to="/dashboard">
-                    <Button variant="secondary" size="sm" className="flex items-center gap-2">
+                    <Button variant="outline" size="sm" className="flex items-center gap-2 glass-card border-primary/30">
                       <Settings className="h-4 w-4" />
                       Dashboard
                     </Button>
                   </Link>
                 )}
-                <span className="text-white/90">Welcome, {profile?.full_name || user.email}</span>
+                <span className="text-muted-foreground">Welcome, {profile?.full_name || user.email}</span>
               </div>
             ) : (
               <Link to="/auth">
-                <Button variant="secondary" size="sm" className="flex items-center gap-2">
+                <Button variant="outline" size="sm" className="flex items-center gap-2 glass-card border-primary/30">
                   <User className="h-4 w-4" />
                   Sign In
                 </Button>
@@ -82,62 +94,94 @@ const Index = () => {
 
         {/* Hero Content */}
         <div className="flex-1 container mx-auto px-6 flex items-center relative z-10">
-          <div className="max-w-4xl mx-auto text-center text-white">
-            <h1 className="text-6xl md:text-7xl font-bold mb-6 leading-tight">
-              Florida's Premier
-              <span className="block bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
-                Service Network
-              </span>
-            </h1>
-            <p className="text-xl mb-8 text-white/90 leading-relaxed">
-              Connect with verified contractors across all 67 Florida counties. Get estimates when available for roofing, HVAC, plumbing, and more.
+          <div className="max-w-6xl mx-auto text-center">
+            <div className="inline-flex items-center gap-3 bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 rounded-full px-6 py-3 text-sm font-medium text-primary backdrop-blur-sm mb-8">
+              <BrainCircuit className="h-5 w-5" />
+              <span className="font-tech">AI-Powered Contractor Matching</span>
+            </div>
+            
+            <div className="relative mb-8">
+              <img 
+                src={brainIcon} 
+                alt="AI Brain" 
+                className="absolute top-0 right-0 w-24 h-24 opacity-40 animate-pulse" 
+              />
+              <h1 className="text-6xl md:text-8xl font-bold leading-tight relative z-10">
+                <span className="font-tech bg-gradient-to-r from-purple-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                  Smart Florida
+                </span>
+                <span className="block bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mt-2">
+                  Service Network 🧠⚡
+                </span>
+              </h1>
+            </div>
+            
+            <p className="text-xl md:text-2xl mb-8 text-muted-foreground leading-relaxed max-w-4xl mx-auto">
+              Our AI instantly matches you with Florida's elite contractors. From emergency hurricane repairs 
+              to luxury renovations - intelligent connections, guaranteed results across all 67 counties.
             </p>
             
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center mb-12">
               <Button
                 onClick={() => setIsChatOpen(true)}
                 size="lg"
-                className="bg-white text-primary hover:bg-white/90 text-lg px-8 py-6 rounded-xl shadow-luxury"
+                className="bg-gradient-to-r from-primary to-accent text-white hover:from-primary/90 hover:to-accent/90 text-lg px-8 py-6 rounded-xl shadow-luxury glass-card border border-white/20"
               >
                 <MessageCircle className="mr-2 h-5 w-5" />
-                Get Instant Help
+                Start AI Chat 🧠
               </Button>
               <Button
                 size="lg"
                 variant="outline"
-                className="border-white text-white hover:bg-white hover:text-primary text-lg px-8 py-6 rounded-xl"
+                className="glass-card border-primary/30 text-primary hover:bg-primary/10 text-lg px-8 py-6 rounded-xl backdrop-blur-sm"
               >
                 <Phone className="mr-2 h-5 w-5" />
-                Call Now: (941) 253-8936
+                Call: (941) 253-8936
               </Button>
             </div>
 
-            {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
-              <div className="glass-card p-6 text-center bg-white/10 backdrop-blur-md border border-white/20 rounded-xl">
-                <div className="text-3xl font-bold mb-2">67</div>
-                <div className="text-white/80">Florida Counties</div>
+            {/* Enhanced Stats with Glass Effect */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+              <div className="glass-card p-8 text-center bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl hover:bg-white/10 transition-all duration-300 hover:scale-105">
+                <div className="text-4xl font-bold mb-3 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">67</div>
+                <div className="text-muted-foreground font-medium">Florida Counties</div>
+                <div className="text-xs text-muted-foreground/70 mt-1">Statewide Coverage</div>
               </div>
-              <div className="glass-card p-6 text-center bg-white/10 backdrop-blur-md border border-white/20 rounded-xl">
-                <div className="text-3xl font-bold mb-2">24/7</div>
-                <div className="text-white/80">Emergency Service</div>
+              <div className="glass-card p-8 text-center bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl hover:bg-white/10 transition-all duration-300 hover:scale-105">
+                <div className="text-4xl font-bold mb-3 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">24/7</div>
+                <div className="text-muted-foreground font-medium">Emergency Service</div>
+                <div className="text-xs text-muted-foreground/70 mt-1">Hurricane Ready</div>
               </div>
-              <div className="glass-card p-6 text-center bg-white/10 backdrop-blur-md border border-white/20 rounded-xl">
-                <div className="text-3xl font-bold mb-2">5★</div>
-                <div className="text-white/80">Average Rating</div>
+              <div className="glass-card p-8 text-center bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl hover:bg-white/10 transition-all duration-300 hover:scale-105">
+                <div className="text-4xl font-bold mb-3 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">AI</div>
+                <div className="text-muted-foreground font-medium">Smart Matching</div>
+                <div className="text-xs text-muted-foreground/70 mt-1">Instant Connection</div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Services Section */}
-      <section id="services" className="py-20 container mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">Professional Services</h2>
+      {/* Enhanced Services Section with Glassmorphism */}
+      <section id="services" className="py-20 container mx-auto px-6 relative overflow-hidden">
+        {/* Background brain imagery */}
+        <img 
+          src={detailedNeonBrain} 
+          alt="Background brain" 
+          className="absolute top-10 right-10 w-48 h-48 opacity-10 animate-pulse"
+        />
+        
+        <div className="text-center mb-16 relative z-10">
+          <div className="inline-flex items-center gap-3 bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 rounded-full px-6 py-3 text-sm font-medium text-primary backdrop-blur-sm mb-6">
+            <Brain className="h-5 w-5" />
+            <span>AI-Powered Service Matching</span>
+          </div>
+          <h2 className="text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            Professional Services
+          </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            From emergency repairs to planned renovations, our network of licensed contractors covers all your needs
+            From emergency repairs to planned renovations, our AI network connects you with Florida's elite contractors
           </p>
         </div>
 
