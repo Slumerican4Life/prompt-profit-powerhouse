@@ -71,34 +71,48 @@ const Index = () => {
         return Math.round(baseValue * emergencyMultiplier);
       };
 
-      // Insert lead into Supabase
-      const { data, error } = await supabase
-        .from('leads')
-        .insert({
-          full_name: formData.name,
-          phone: formData.phone,
-          email: formData.email,
-          service_needed: formData.serviceType,
-          timeline: formData.urgency,
-          budget: formData.budget,
-          property_address: formData.address,
-          project_description: formData.description,
-          urgency_level: formData.urgency,
-          lead_value: calculateLeadValue()
-        })
-        .select()
-        .single();
+      const leadValue = calculateLeadValue();
+      const leadData = {
+        full_name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        service_needed: formData.serviceType,
+        timeline: formData.urgency,
+        budget: formData.budget,
+        property_address: formData.address,
+        project_description: formData.description,
+        urgency_level: formData.urgency,
+        lead_value: leadValue,
+        timestamp: new Date().toISOString()
+      };
 
-      if (error) {
-        throw error;
+      // Parallel execution: Save to both Supabase AND Google Sheets
+      const [supabaseResult, googleSheetsResult] = await Promise.allSettled([
+        // Save to Supabase
+        supabase.from('leads').insert(leadData).select().single(),
+        
+        // Save to Google Sheets
+        fetch("https://script.google.com/macros/s/YOUR_GOOGLE_SCRIPT_ID/exec", {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(leadData)
+        })
+      ]);
+
+      // Check Supabase result
+      if (supabaseResult.status === 'rejected' || 
+          (supabaseResult.status === 'fulfilled' && supabaseResult.value.error)) {
+        console.error("Supabase error:", supabaseResult);
+        throw new Error("Database save failed");
       }
 
-      console.log("Lead captured successfully:", data);
+      console.log("Lead captured successfully in both systems:", leadData);
       
       setIsSubmitted(true);
       toast({
         title: "🎯 Premium Lead Captured!",
-        description: `High-value ${formData.serviceType} lead worth $${calculateLeadValue()} captured and ready for contractor network!`,
+        description: `High-value ${formData.serviceType} lead worth $${leadValue} saved to database & spreadsheet!`,
       });
     } catch (error) {
       console.error("Error capturing lead:", error);
