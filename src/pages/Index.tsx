@@ -23,6 +23,7 @@ const Index = () => {
     { name: "❄️ AC/HVAC", description: "24/7 cooling system experts", price: "Free estimates when available", icon: "❄️", popular: true },
     { name: "🔧 Plumbing", description: "Emergency & scheduled service", price: "Quick response available", icon: "🔧", popular: true },
     { name: "⚡ Electrical", description: "Licensed & insured electricians", price: "Safety first approach", icon: "⚡", urgent: false },
+    { name: "🦟 Head Lice Removal", description: "Professional treatment & prevention", price: "Same-day service available", icon: "🦟", popular: false },
     { name: "🏊 Pool Service", description: "Maintenance & equipment repair", price: "Seasonal packages available", icon: "🏊", popular: false },
     { name: "🌿 Landscaping", description: "Design & maintenance", price: "Custom quotes available", icon: "🌿", popular: false },
   ];

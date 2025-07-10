@@ -63,6 +63,7 @@ export function LiveChat({ isOpen, onClose }: LiveChatProps) {
     email: "",
     phone: "",
     service: "",
+    customService: "",
     description: "",
     urgency: "normal"
   });
@@ -170,11 +171,12 @@ export function LiveChat({ isOpen, onClose }: LiveChatProps) {
     
     try {
       // Save contact message to Supabase
+      const serviceNeeded = contactForm.service === "Other" ? contactForm.customService : contactForm.service;
       const messageData = {
         full_name: contactForm.name,
         phone: contactForm.phone,
         email: contactForm.email,
-        service_needed: contactForm.service,
+        service_needed: serviceNeeded,
         project_description: contactForm.description,
         urgency_level: contactForm.urgency,
         timeline: contactForm.urgency === 'emergency' ? 'Emergency' : '1-week',
@@ -195,7 +197,7 @@ export function LiveChat({ isOpen, onClose }: LiveChatProps) {
       // Add confirmation message to chat
       setMessages(prev => [...prev, {
         type: 'bot',
-        text: `🎯 Perfect! I've received your ${contactForm.service} request and forwarded it to our top contractors in your area. Expect calls within 30 minutes with competitive quotes!`,
+        text: `🎯 Perfect! I've received your ${serviceNeeded} request and forwarded it to our top contractors in your area. Expect calls within 30 minutes with competitive quotes!`,
         time: new Date().toLocaleTimeString()
       }]);
 
@@ -205,6 +207,7 @@ export function LiveChat({ isOpen, onClose }: LiveChatProps) {
         email: "",
         phone: "",
         service: "",
+        customService: "",
         description: "",
         urgency: "normal"
       });
@@ -244,7 +247,7 @@ export function LiveChat({ isOpen, onClose }: LiveChatProps) {
         
         <CardContent className="p-0">
           <Tabs defaultValue="chat" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 m-3 mb-0">
+            <TabsList className="grid w-full grid-cols-3 m-3 mb-0">
               <TabsTrigger value="chat" className="flex items-center gap-2">
                 <MessageCircle className="h-4 w-4" />
                 AI Chat
@@ -252,6 +255,10 @@ export function LiveChat({ isOpen, onClose }: LiveChatProps) {
               <TabsTrigger value="contact" className="flex items-center gap-2">
                 <User className="h-4 w-4" />
                 Quick Form
+              </TabsTrigger>
+              <TabsTrigger value="manual" className="flex items-center gap-2">
+                <Phone className="h-4 w-4" />
+                Manual Entry
               </TabsTrigger>
             </TabsList>
 
@@ -388,7 +395,7 @@ export function LiveChat({ isOpen, onClose }: LiveChatProps) {
                       id="service"
                       required
                       value={contactForm.service}
-                      onChange={(e) => setContactForm({...contactForm, service: e.target.value})}
+                      onChange={(e) => setContactForm({...contactForm, service: e.target.value, customService: ""})}
                       className="flex h-10 w-full rounded-md border border-primary/20 bg-card/50 backdrop-blur-sm px-3 py-2 text-sm"
                     >
                       <option value="">Select service</option>
@@ -396,9 +403,10 @@ export function LiveChat({ isOpen, onClose }: LiveChatProps) {
                       <option value="AC/HVAC">❄️ AC/HVAC</option>
                       <option value="Plumbing">🔧 Plumbing</option>
                       <option value="Electrical">⚡ Electrical</option>
+                      <option value="Head Lice Removal">🦟 Head Lice Removal</option>
                       <option value="Pool Service">🏊 Pool Service</option>
                       <option value="Landscaping">🌿 Landscaping</option>
-                      <option value="Other">Other</option>
+                      <option value="Other">Other (Custom)</option>
                     </select>
                   </div>
                   
@@ -417,6 +425,21 @@ export function LiveChat({ isOpen, onClose }: LiveChatProps) {
                     </select>
                   </div>
                 </div>
+
+                {/* Custom Service Input */}
+                {contactForm.service === "Other" && (
+                  <div className="space-y-2">
+                    <Label htmlFor="customService" className="text-sm font-semibold">What service do you need? *</Label>
+                    <Input
+                      id="customService"
+                      required
+                      value={contactForm.customService}
+                      onChange={(e) => setContactForm({...contactForm, customService: e.target.value})}
+                      placeholder="Please describe the service you need..."
+                      className="glass-card border-primary/20"
+                    />
+                  </div>
+                )}
 
                 <div className="space-y-2">
                   <Label htmlFor="description" className="text-sm font-semibold">Project Description</Label>
@@ -441,6 +464,135 @@ export function LiveChat({ isOpen, onClose }: LiveChatProps) {
                   We'll connect you with 2-3 licensed contractors within 30 minutes
                 </p>
               </form>
+            </TabsContent>
+
+            <TabsContent value="manual" className="p-4 m-0">
+              <div className="space-y-4">
+                <div className="text-center mb-4">
+                  <h3 className="font-bold text-foreground mb-2">📞 Manual Lead Entry</h3>
+                  <p className="text-xs text-muted-foreground">
+                    Use this when taking calls directly from customers
+                  </p>
+                </div>
+
+                <form onSubmit={handleContactSubmit} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-2">
+                      <Label htmlFor="manual-name" className="text-sm font-semibold text-foreground">Customer Name *</Label>
+                      <Input
+                        id="manual-name"
+                        required
+                        value={contactForm.name}
+                        onChange={(e) => setContactForm({...contactForm, name: e.target.value})}
+                        placeholder="Customer's full name"
+                        className="border-2 border-border focus:border-primary bg-background text-foreground"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="manual-phone" className="text-sm font-semibold text-foreground">Phone Number *</Label>
+                      <Input
+                        id="manual-phone"
+                        type="tel"
+                        required
+                        value={contactForm.phone}
+                        onChange={(e) => setContactForm({...contactForm, phone: e.target.value})}
+                        placeholder="Customer's phone"
+                        className="border-2 border-border focus:border-primary bg-background text-foreground"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="manual-email" className="text-sm font-semibold text-foreground">Email Address</Label>
+                    <Input
+                      id="manual-email"
+                      type="email"
+                      value={contactForm.email}
+                      onChange={(e) => setContactForm({...contactForm, email: e.target.value})}
+                      placeholder="Customer's email (optional)"
+                      className="border-2 border-border focus:border-primary bg-background text-foreground"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-2">
+                      <Label htmlFor="manual-service" className="text-sm font-semibold text-foreground">Service Needed *</Label>
+                      <select
+                        id="manual-service"
+                        required
+                        value={contactForm.service}
+                        onChange={(e) => setContactForm({...contactForm, service: e.target.value, customService: ""})}
+                        className="flex h-10 w-full rounded-md border-2 border-border focus:border-primary bg-background text-foreground px-3 py-2 text-sm"
+                      >
+                        <option value="">What do they need?</option>
+                        <option value="Roofing">🏠 Roofing</option>
+                        <option value="AC/HVAC">❄️ AC/HVAC</option>
+                        <option value="Plumbing">🔧 Plumbing</option>
+                        <option value="Electrical">⚡ Electrical</option>
+                        <option value="Head Lice Removal">🦟 Head Lice Removal</option>
+                        <option value="Pool Service">🏊 Pool Service</option>
+                        <option value="Landscaping">🌿 Landscaping</option>
+                        <option value="Hurricane Prep">🌪️ Hurricane Prep</option>
+                        <option value="General Contracting">🔨 General Contracting</option>
+                        <option value="Other">❓ Other (Custom Service)</option>
+                      </select>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="manual-urgency" className="text-sm font-semibold text-foreground">How Urgent? *</Label>
+                      <select
+                        id="manual-urgency"
+                        required
+                        value={contactForm.urgency}
+                        onChange={(e) => setContactForm({...contactForm, urgency: e.target.value})}
+                        className="flex h-10 w-full rounded-md border-2 border-border focus:border-primary bg-background text-foreground px-3 py-2 text-sm"
+                      >
+                        <option value="normal">📅 Normal (1-2 weeks)</option>
+                        <option value="urgent">⚡ Urgent (this week)</option>
+                        <option value="emergency">🚨 Emergency (today)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Custom Service Input for Manual Entry */}
+                  {contactForm.service === "Other" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="manual-customService" className="text-sm font-semibold text-foreground">What service do they need? *</Label>
+                      <Input
+                        id="manual-customService"
+                        required
+                        value={contactForm.customService}
+                        onChange={(e) => setContactForm({...contactForm, customService: e.target.value})}
+                        placeholder="Describe the custom service needed..."
+                        className="border-2 border-border focus:border-primary bg-background text-foreground"
+                      />
+                    </div>
+                  )}
+
+                  <div className="space-y-2">
+                    <Label htmlFor="manual-description" className="text-sm font-semibold text-foreground">Details & Notes</Label>
+                    <Textarea
+                      id="manual-description"
+                      value={contactForm.description}
+                      onChange={(e) => setContactForm({...contactForm, description: e.target.value})}
+                      placeholder="What exactly do they need? Any specific details, budget, timeline, or special requirements..."
+                      className="min-h-[100px] border-2 border-border focus:border-primary bg-background text-foreground"
+                    />
+                  </div>
+
+                  <Button 
+                    type="submit" 
+                    disabled={isSubmitting}
+                    className="w-full bg-destructive hover:bg-destructive/90 text-destructive-foreground font-semibold border-2 border-destructive"
+                  >
+                    {isSubmitting ? "📤 Creating Lead..." : "📞 Create Lead & Send to Contractors"}
+                  </Button>
+
+                  <p className="text-xs text-muted-foreground text-center">
+                    Lead will be distributed to contractors immediately
+                  </p>
+                </form>
+              </div>
             </TabsContent>
           </Tabs>
         </CardContent>
