@@ -10,6 +10,9 @@ import { LiveChat } from "@/components/LiveChat";
 import { supabase } from "@/integrations/supabase/client";
 import aiBrainHero from "@/assets/ai-brain-hero.jpg";
 import brainIcon from "@/assets/brain-icon.jpg";
+import floridaRoofer from "@/assets/florida-roofer-action.jpg";
+import floridaHvac from "@/assets/florida-hvac-expert.jpg";
+import floridaPlumber from "@/assets/florida-plumber-work.jpg";
 
 const Index = () => {
   const [formData, setFormData] = useState({
@@ -522,6 +525,121 @@ const Index = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Compelling Worker Images Section */}
+        <div className="mt-16 space-y-8">
+          <div className="text-center space-y-4">
+            <h3 className="text-4xl font-bold luxury-text">Meet Florida's Elite Contractors</h3>
+            <p className="text-xl text-muted-foreground">Real professionals, real results, real expertise you can trust</p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            <Card className="glass-card group hover:shadow-luxury transition-all duration-500 hover:scale-[1.02] overflow-hidden">
+              <div className="relative">
+                <img 
+                  src={floridaRoofer} 
+                  alt="Professional Florida roofer at work" 
+                  className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                <div className="absolute bottom-4 left-4 text-white">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                    <span className="text-sm font-semibold">EMERGENCY READY</span>
+                  </div>
+                  <h4 className="text-xl font-bold">🏠 Roofing Experts</h4>
+                  <p className="text-sm text-gray-200">Hurricane damage specialists</p>
+                </div>
+              </div>
+              <CardContent className="p-6">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Response Time:</span>
+                    <span className="font-semibold text-green-400">30-60 minutes</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Lead Value:</span>
+                    <span className="font-semibold text-primary">$300-600</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    <span className="text-sm font-semibold">4.9/5 Rating (850+ jobs)</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="glass-card group hover:shadow-luxury transition-all duration-500 hover:scale-[1.02] overflow-hidden">
+              <div className="relative">
+                <img 
+                  src={floridaHvac} 
+                  alt="Professional HVAC technician in Florida" 
+                  className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                <div className="absolute bottom-4 left-4 text-white">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
+                    <span className="text-sm font-semibold">24/7 SERVICE</span>
+                  </div>
+                  <h4 className="text-xl font-bold">❄️ HVAC Masters</h4>
+                  <p className="text-sm text-gray-200">Florida heat specialists</p>
+                </div>
+              </div>
+              <CardContent className="p-6">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Response Time:</span>
+                    <span className="font-semibold text-blue-400">1-2 hours</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Lead Value:</span>
+                    <span className="font-semibold text-primary">$250-450</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    <span className="text-sm font-semibold">4.8/5 Rating (1,200+ jobs)</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="glass-card group hover:shadow-luxury transition-all duration-500 hover:scale-[1.02] overflow-hidden">
+              <div className="relative">
+                <img 
+                  src={floridaPlumber} 
+                  alt="Professional plumber working in Florida" 
+                  className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                <div className="absolute bottom-4 left-4 text-white">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-3 h-3 bg-cyan-400 rounded-full animate-pulse"></div>
+                    <span className="text-sm font-semibold">WATER EMERGENCY</span>
+                  </div>
+                  <h4 className="text-xl font-bold">🔧 Plumbing Pros</h4>
+                  <p className="text-sm text-gray-200">Water damage prevention</p>
+                </div>
+              </div>
+              <CardContent className="p-6">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Response Time:</span>
+                    <span className="font-semibold text-cyan-400">45-90 minutes</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Lead Value:</span>
+                    <span className="font-semibold text-primary">$200-400</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    <span className="text-sm font-semibold">4.9/5 Rating (950+ jobs)</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
 
       {/* Floating Chat Button */}
