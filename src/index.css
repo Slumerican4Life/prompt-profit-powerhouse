@@ -8,60 +8,71 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Professional Dark Theme Colors */
-    --background: 222 22% 8%;
+    /* Powerhouse/Neuronix Dark Glassmorphic Theme */
+    --background: 250 24% 9%;  /* Deep dark purple */
     --foreground: 210 40% 98%;
 
-    --card: 222 22% 10%;
+    --card: 250 20% 12%;  /* Dark purple card */
     --card-foreground: 210 40% 98%;
 
-    --popover: 222 22% 12%;
+    --popover: 250 20% 14%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 213 93% 67%;
-    --primary-foreground: 222 22% 8%;
+    --primary: 200 100% 70%;  /* Light blue primary */
+    --primary-foreground: 250 24% 9%;
 
-    --secondary: 217 32% 17%;
+    --secondary: 240 30% 20%;  /* Dark blue secondary */
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217 32% 14%;
+    --muted: 245 25% 15%;
     --muted-foreground: 215 20% 65%;
 
-    --accent: 213 93% 67%;
-    --accent-foreground: 222 22% 8%;
+    --accent: 280 65% 65%;  /* Electric purple accent */
+    --accent-foreground: 250 24% 9%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217 32% 17%;
-    --input: 217 32% 17%;
-    --ring: 213 93% 67%;
+    --border: 240 30% 20%;
+    --input: 240 30% 20%;
+    --ring: 200 100% 70%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
-    /* Professional Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(213 93% 67%), hsl(213 93% 57%));
-    --gradient-dark: linear-gradient(135deg, hsl(222 22% 8%), hsl(217 32% 12%));
-    --gradient-accent: linear-gradient(135deg, hsl(213 93% 67% / 0.1), hsl(213 93% 67% / 0.05));
-    --gradient-success: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 70% 45%));
+    /* Neuronix Glassmorphic Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(200 100% 70%), hsl(280 65% 65%));
+    --gradient-dark: linear-gradient(135deg, hsl(250 24% 9%), hsl(240 30% 12%));
+    --gradient-glass: linear-gradient(135deg, rgba(200, 255, 255, 0.1), rgba(160, 100, 255, 0.1));
+    --gradient-neon: linear-gradient(135deg, hsl(200 100% 70% / 0.2), hsl(280 65% 65% / 0.2));
+    --gradient-hero: radial-gradient(ellipse at center, hsl(280 65% 65% / 0.3), hsl(250 24% 9%));
 
-    /* Professional Shadows */
-    --shadow-luxury: 0 25px 50px -12px hsl(213 93% 67% / 0.25);
-    --shadow-deep: 0 20px 25px -5px hsl(222 22% 8% / 0.4), 0 10px 10px -5px hsl(222 22% 8% / 0.04);
-    --shadow-glow: 0 0 50px hsl(213 93% 67% / 0.3);
+    /* Neon Shadows & Glows */
+    --shadow-luxury: 0 25px 50px -12px hsl(200 100% 70% / 0.4);
+    --shadow-deep: 0 20px 25px -5px hsl(250 24% 9% / 0.6), 0 10px 10px -5px hsl(240 30% 12% / 0.1);
+    --shadow-glow: 0 0 80px hsl(200 100% 70% / 0.5);
+    --shadow-purple-glow: 0 0 60px hsl(280 65% 65% / 0.4);
+    --shadow-red-glow: 0 0 20px hsl(0 100% 60% / 0.6);
+    --shadow-gold-glow: 0 0 30px hsl(45 100% 60% / 0.7);
+
+    /* Lightning & Neural Colors */
+    --neural-red: 0 100% 65%;
+    --lightning-gold: 45 100% 60%;
+    --brain-purple: 280 65% 65%;
+    --brain-blue: 240 70% 65%;
 
     /* Animation Variables */
     --transition-luxury: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-glow: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 
-    --sidebar-background: 222 22% 10%;
+    --sidebar-background: 250 20% 12%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 213 93% 67%;
-    --sidebar-primary-foreground: 222 22% 8%;
-    --sidebar-accent: 217 32% 17%;
+    --sidebar-primary: 200 100% 70%;
+    --sidebar-primary-foreground: 250 24% 9%;
+    --sidebar-accent: 240 30% 20%;
     --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217 32% 17%;
-    --sidebar-ring: 213 93% 67%;
+    --sidebar-border: 240 30% 20%;
+    --sidebar-ring: 200 100% 70%;
   }
 
   .light {
@@ -97,9 +108,9 @@ All colors MUST be HSL.
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
-  /* Professional Animations */
+  /* Neuronix Glassmorphic Animations */
   .luxury-enter {
-    animation: luxuryEnter 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: luxuryEnter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .float-animation {
@@ -107,50 +118,146 @@ All colors MUST be HSL.
   }
 
   .glow-pulse {
-    animation: glowPulse 2s ease-in-out infinite;
+    animation: glowPulse 3s ease-in-out infinite;
+  }
+
+  .brain-glow {
+    animation: brainGlow 4s ease-in-out infinite;
+  }
+
+  .lightning-flicker {
+    animation: lightningFlicker 2s ease-in-out infinite;
+  }
+
+  .neural-pulse {
+    animation: neuralPulse 1.5s ease-in-out infinite;
+  }
+
+  .glass-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .glass-shimmer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    animation: shimmer 3s infinite;
   }
 
   @keyframes luxuryEnter {
     0% {
       opacity: 0;
-      transform: translateY(30px) scale(0.95);
+      transform: translateY(40px) scale(0.9);
+      filter: blur(10px);
     }
     100% {
       opacity: 1;
       transform: translateY(0) scale(1);
+      filter: blur(0px);
     }
   }
 
   @keyframes float {
     0%, 100% {
-      transform: translateY(0px);
+      transform: translateY(0px) rotate(0deg);
     }
-    50% {
-      transform: translateY(-10px);
+    33% {
+      transform: translateY(-8px) rotate(1deg);
+    }
+    66% {
+      transform: translateY(-5px) rotate(-0.5deg);
     }
   }
 
   @keyframes glowPulse {
     0%, 100% {
-      box-shadow: 0 0 20px hsl(213 93% 67% / 0.3);
+      box-shadow: 0 0 30px hsl(200 100% 70% / 0.3), 0 0 60px hsl(280 65% 65% / 0.2);
     }
     50% {
-      box-shadow: 0 0 40px hsl(213 93% 67% / 0.6);
+      box-shadow: 0 0 50px hsl(200 100% 70% / 0.6), 0 0 100px hsl(280 65% 65% / 0.4);
     }
   }
 
-  /* Professional Typography */
+  @keyframes brainGlow {
+    0%, 100% {
+      filter: drop-shadow(0 0 20px hsl(280 65% 65% / 0.6)) drop-shadow(0 0 40px hsl(200 100% 70% / 0.4));
+    }
+    50% {
+      filter: drop-shadow(0 0 40px hsl(280 65% 65% / 0.9)) drop-shadow(0 0 80px hsl(200 100% 70% / 0.7));
+    }
+  }
+
+  @keyframes lightningFlicker {
+    0%, 90%, 100% { opacity: 1; }
+    5%, 15%, 25%, 35%, 45% { opacity: 0.3; }
+    10%, 20%, 30%, 40% { opacity: 1; }
+  }
+
+  @keyframes neuralPulse {
+    0%, 100% {
+      filter: drop-shadow(0 0 5px hsl(0 100% 65% / 0.8));
+    }
+    50% {
+      filter: drop-shadow(0 0 15px hsl(0 100% 65% / 1)) drop-shadow(0 0 25px hsl(0 100% 65% / 0.6));
+    }
+  }
+
+  @keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+  }
+
+  /* Enhanced Typography */
   .luxury-text {
     background: var(--gradient-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    filter: drop-shadow(0 0 10px hsl(200 100% 70% / 0.3));
   }
 
-  /* Professional Glassmorphism */
+  .tech-text {
+    font-family: 'Orbitron', 'Courier New', monospace;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  /* Enhanced Glassmorphism */
   .glass-card {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.03);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-card-strong {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 
+      0 20px 40px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+
+  .neon-border {
+    border: 1px solid hsl(200 100% 70% / 0.5);
+    box-shadow: 
+      0 0 20px hsl(200 100% 70% / 0.3),
+      inset 0 0 20px hsl(200 100% 70% / 0.1);
+  }
+
+  .neural-glow {
+    box-shadow: 0 0 15px hsl(0 100% 65% / 0.8);
+  }
+
+  .lightning-glow {
+    box-shadow: 0 0 20px hsl(45 100% 60% / 0.9);
   }
 }
