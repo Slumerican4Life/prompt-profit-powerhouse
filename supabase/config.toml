@@ -1,1 +1,10 @@
-project_id = "peuoyvedpbleoohjditf"
+project_id = "peuoyvedpbleoohjaditf"
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["https://peuoyvedpbleoohjaditf.supabase.co"]
+jwt_expiry = 3600
+
+[functions.openai-chat]
+verify_jwt = false

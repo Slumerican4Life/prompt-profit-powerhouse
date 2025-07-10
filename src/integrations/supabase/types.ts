@@ -16,49 +16,99 @@ export type Database = {
     Tables: {
       leads: {
         Row: {
+          assigned_to: string | null
           budget: string | null
           created_at: string
           email: string
           full_name: string
           id: string
           lead_value: number | null
+          notes: string | null
           phone: string
           project_description: string | null
           property_address: string | null
           service_needed: string
+          status: string | null
           timeline: string | null
           updated_at: string
           urgency_level: string | null
         }
         Insert: {
+          assigned_to?: string | null
           budget?: string | null
           created_at?: string
           email: string
           full_name: string
           id?: string
           lead_value?: number | null
+          notes?: string | null
           phone: string
           project_description?: string | null
           property_address?: string | null
           service_needed: string
+          status?: string | null
           timeline?: string | null
           updated_at?: string
           urgency_level?: string | null
         }
         Update: {
+          assigned_to?: string | null
           budget?: string | null
           created_at?: string
           email?: string
           full_name?: string
           id?: string
           lead_value?: number | null
+          notes?: string | null
           phone?: string
           project_description?: string | null
           property_address?: string | null
           service_needed?: string
+          status?: string | null
           timeline?: string | null
           updated_at?: string
           urgency_level?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          full_name: string | null
+          id: string
+          is_away: boolean
+          role: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          full_name?: string | null
+          id?: string
+          is_away?: boolean
+          role?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          full_name?: string | null
+          id?: string
+          is_away?: boolean
+          role?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }

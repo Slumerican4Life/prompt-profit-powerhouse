@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -53,10 +53,11 @@ const quickActions = [
 
 export function LiveChat({ isOpen, onClose }: LiveChatProps) {
   const [messages, setMessages] = useState([
-    { type: 'bot', text: aiResponses.greeting, time: new Date().toLocaleTimeString() }
+    { type: 'bot', text: "🤖 Hi! I'm your Florida Service AI Assistant. I can connect you with verified contractors across all 67 Florida counties. What service do you need help with today?", time: new Date().toLocaleTimeString() }
   ]);
   const [inputMessage, setInputMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [conversationHistory, setConversationHistory] = useState([]);
   const [contactForm, setContactForm] = useState({
     name: "",
     email: "",
@@ -66,9 +67,31 @@ export function LiveChat({ isOpen, onClose }: LiveChatProps) {
     urgency: "normal"
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isAwayMode, setIsAwayMode] = useState(false);
   const { toast } = useToast();
 
-  const handleSendMessage = () => {
+  // Check if service is in away mode
+  useEffect(() => {
+    checkAwayStatus();
+  }, []);
+
+  const checkAwayStatus = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('is_away')
+        .eq('role', 'owner')
+        .single();
+
+      if (!error && data) {
+        setIsAwayMode(data.is_away);
+      }
+    } catch (error) {
+      console.error('Error checking away status:', error);
+    }
+  };
+
+  const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
 
     const userMessage = {
@@ -80,8 +103,36 @@ export function LiveChat({ isOpen, onClose }: LiveChatProps) {
     setMessages(prev => [...prev, userMessage]);
     setIsTyping(true);
 
-    // Enhanced AI response logic
-    setTimeout(() => {
+    // Add to conversation history
+    const newHistory = [...conversationHistory, { role: 'user', content: inputMessage }];
+    setConversationHistory(newHistory);
+
+    try {
+      // Call OpenAI edge function
+      const { data, error } = await supabase.functions.invoke('openai-chat', {
+        body: {
+          message: inputMessage,
+          conversationHistory: newHistory
+        }
+      });
+
+      if (error) throw error;
+
+      const botResponse = data.response || "I apologize, I'm having trouble connecting right now. Please try again or use the contact form below.";
+      
+      setMessages(prev => [...prev, {
+        type: 'bot',
+        text: botResponse,
+        time: new Date().toLocaleTimeString()
+      }]);
+
+      // Update conversation history with AI response
+      setConversationHistory([...newHistory, { role: 'assistant', content: botResponse }]);
+
+    } catch (error) {
+      console.error('Error calling OpenAI:', error);
+      
+      // Fallback to basic responses if OpenAI fails
       let botResponse = aiResponses.default;
       const input = inputMessage.toLowerCase();
       
@@ -93,29 +144,19 @@ export function LiveChat({ isOpen, onClose }: LiveChatProps) {
         botResponse = aiResponses.plumbing;
       } else if (input.includes('electric') || input.includes('wire') || input.includes('outlet') || input.includes('power')) {
         botResponse = aiResponses.electrical;
-      } else if (input.includes('pool') || input.includes('spa') || input.includes('chlorine')) {
-        botResponse = aiResponses.pool;
-      } else if (input.includes('hurricane') || input.includes('storm') || input.includes('shutter')) {
-        botResponse = aiResponses.hurricane;
       } else if (input.includes('emergency') || input.includes('urgent') || input.includes('asap') || input.includes('help')) {
-        botResponse = aiResponses.emergency;
-      } else if (input.includes('cost') || input.includes('price') || input.includes('free') || input.includes('money')) {
-        botResponse = aiResponses.pricing;
-      } else if (input.includes('when') || input.includes('timeline') || input.includes('how long')) {
-        botResponse = aiResponses.timeline;
-      } else if (input.includes('where') || input.includes('location') || input.includes('area')) {
-        botResponse = aiResponses.location;
+        botResponse = isAwayMode ? "🚨 I understand this is urgent! The team is currently away, but I'm here to help collect your information and ensure you get priority response when they return. Please fill out the form below with your emergency details." : aiResponses.emergency;
       }
 
-      setIsTyping(false);
       setMessages(prev => [...prev, {
         type: 'bot',
         text: botResponse,
         time: new Date().toLocaleTimeString()
       }]);
-    }, 1500);
-
-    setInputMessage("");
+    } finally {
+      setIsTyping(false);
+      setInputMessage("");
+    }
   };
 
   const handleQuickAction = (action: string) => {
@@ -191,7 +232,9 @@ export function LiveChat({ isOpen, onClose }: LiveChatProps) {
             </div>
             <div>
               <CardTitle className="text-lg font-tech">AI Assistant</CardTitle>
-              <p className="text-xs text-muted-foreground">Florida's Smartest Contractor Network</p>
+              <p className="text-xs text-muted-foreground">
+                {isAwayMode ? "Away - Leave Message with AI" : "Florida's Smartest Contractor Network"}
+              </p>
             </div>
           </div>
           <Button variant="ghost" size="sm" onClick={onClose} className="hover:bg-white/20">
