@@ -60,6 +60,46 @@ export default function Dashboard() {
   useEffect(() => {
     fetchLeads();
     setIsAway(profile.is_away);
+
+    // Set up real-time subscription for new leads
+    const channel = supabase
+      .channel('schema-db-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'leads'
+        },
+        (payload) => {
+          console.log('New lead received:', payload);
+          setLeads(current => [payload.new as Lead, ...current]);
+          toast({
+            title: "🎯 New Lead!",
+            description: `${(payload.new as Lead).full_name} - ${(payload.new as Lead).service_needed}`,
+          });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'leads'
+        },
+        (payload) => {
+          setLeads(current => 
+            current.map(lead => 
+              lead.id === (payload.new as Lead).id ? payload.new as Lead : lead
+            )
+          );
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   useEffect(() => {

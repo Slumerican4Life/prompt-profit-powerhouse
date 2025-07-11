@@ -23,9 +23,14 @@ const Index = () => {
     { name: "❄️ AC/HVAC", description: "24/7 cooling system experts", price: "Free estimates when available", icon: "❄️", popular: true },
     { name: "🔧 Plumbing", description: "Emergency & scheduled service", price: "Quick response available", icon: "🔧", popular: true },
     { name: "⚡ Electrical", description: "Licensed & insured electricians", price: "Safety first approach", icon: "⚡", urgent: false },
-    { name: "🦟 Head Lice Removal", description: "Professional treatment & prevention", price: "Same-day service available", icon: "🦟", popular: false },
+    { name: "🦟 Head Lice Removal", description: "Professional lice treatment & nurse services", price: "Same-day service available", icon: "🦟", popular: true },
     { name: "🏊 Pool Service", description: "Maintenance & equipment repair", price: "Seasonal packages available", icon: "🏊", popular: false },
     { name: "🌿 Landscaping", description: "Design & maintenance", price: "Custom quotes available", icon: "🌿", popular: false },
+    { name: "🎨 Interior Design", description: "Kitchen & bathroom remodeling", price: "Design consultation", icon: "🎨", popular: false },
+    { name: "🧽 House Cleaning", description: "Regular & deep cleaning services", price: "Weekly packages", icon: "🧽", popular: false },
+    { name: "🌪️ Hurricane Prep", description: "Storm shutters & board-up services", price: "Emergency response", icon: "🌪️", urgent: true },
+    { name: "🏗️ General Contracting", description: "Home additions & renovations", price: "Project estimates", icon: "🏗️", popular: false },
+    { name: "🛠️ Custom Services", description: "Any service you need - just describe it!", price: "Personalized quotes", icon: "🛠️", popular: true },
   ];
 
   const trustSignals = [
