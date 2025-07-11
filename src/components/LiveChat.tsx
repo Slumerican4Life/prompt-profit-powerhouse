@@ -222,28 +222,71 @@ export function LiveChat({ isOpen, onClose }: LiveChatProps) {
     }
   };
 
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+
+    const handleClickOutside = (e: MouseEvent) => {
+      const chatElement = document.getElementById('live-chat-container');
+      if (chatElement && !chatElement.contains(e.target as Node)) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 w-[420px] max-h-[700px]">
-      <Card className="glass-card shadow-luxury border-primary/30 backdrop-blur-xl">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 bg-gradient-to-r from-primary/15 to-accent/15 rounded-t-lg relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 animate-pulse"></div>
-          <div className="flex items-center gap-3 relative z-10">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-              <Bot className="h-5 w-5 text-white" />
+    <>
+      {/* Backdrop */}
+      <div className="fixed inset-0 bg-black/30 z-40" onClick={onClose} />
+      
+      {/* Chat Container */}
+      <div 
+        id="live-chat-container"
+        className="fixed bottom-4 right-4 z-50 w-[420px] max-h-[700px]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <Card className="glass-card shadow-luxury border-primary/30 backdrop-blur-xl">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 bg-gradient-to-r from-primary/15 to-accent/15 rounded-t-lg relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 animate-pulse"></div>
+            <div className="flex items-center gap-3 relative z-10">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                <Bot className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <CardTitle className="text-lg font-tech">AI Assistant</CardTitle>
+                <p className="text-xs text-muted-foreground">
+                  {isAwayMode ? "Away - Leave Message with AI" : "Florida's Smartest Contractor Network"}
+                </p>
+              </div>
             </div>
-            <div>
-              <CardTitle className="text-lg font-tech">AI Assistant</CardTitle>
-              <p className="text-xs text-muted-foreground">
-                {isAwayMode ? "Away - Leave Message with AI" : "Florida's Smartest Contractor Network"}
-              </p>
-            </div>
-          </div>
-          <Button variant="ghost" size="sm" onClick={onClose} className="hover:bg-white/20">
-            <X className="h-4 w-4" />
-          </Button>
-        </CardHeader>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onClose();
+              }}
+              className="hover:bg-white/20 w-8 h-8 p-0 rounded-full z-20"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </CardHeader>
         
         <CardContent className="p-0">
           <Tabs defaultValue="chat" className="w-full">
@@ -534,7 +577,8 @@ export function LiveChat({ isOpen, onClose }: LiveChatProps) {
                         <option value="Landscaping">🌿 Landscaping</option>
                         <option value="Hurricane Prep">🌪️ Hurricane Prep</option>
                         <option value="General Contracting">🔨 General Contracting</option>
-                        <option value="Other">❓ Other (Custom Service)</option>
+                      <option value="Other">❓ Other (Custom Service)</option>
+                      <option value="Custom Service">🛠️ Custom Service (Describe Below)</option>
                       </select>
                     </div>
                     
@@ -555,7 +599,7 @@ export function LiveChat({ isOpen, onClose }: LiveChatProps) {
                   </div>
 
                   {/* Custom Service Input for Manual Entry */}
-                  {contactForm.service === "Other" && (
+                  {(contactForm.service === "Other" || contactForm.service === "Custom Service") && (
                     <div className="space-y-2">
                       <Label htmlFor="manual-customService" className="text-sm font-semibold text-foreground">What service do they need? *</Label>
                       <Input
@@ -563,7 +607,7 @@ export function LiveChat({ isOpen, onClose }: LiveChatProps) {
                         required
                         value={contactForm.customService}
                         onChange={(e) => setContactForm({...contactForm, customService: e.target.value})}
-                        placeholder="Describe the custom service needed..."
+                        placeholder="Describe any service needed - roofing, plumbing, electrical, head lice treatment, etc..."
                         className="border-2 border-border focus:border-primary bg-background text-foreground"
                       />
                     </div>
@@ -575,7 +619,7 @@ export function LiveChat({ isOpen, onClose }: LiveChatProps) {
                       id="manual-description"
                       value={contactForm.description}
                       onChange={(e) => setContactForm({...contactForm, description: e.target.value})}
-                      placeholder="What exactly do they need? Any specific details, budget, timeline, or special requirements..."
+                      placeholder="Project details, location, budget, timeline, special requirements, head lice service details, etc..."
                       className="min-h-[100px] border-2 border-border focus:border-primary bg-background text-foreground"
                     />
                   </div>
@@ -596,7 +640,8 @@ export function LiveChat({ isOpen, onClose }: LiveChatProps) {
             </TabsContent>
           </Tabs>
         </CardContent>
-      </Card>
-    </div>
+        </Card>
+      </div>
+    </>
   );
 }
