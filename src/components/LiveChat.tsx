@@ -189,15 +189,16 @@ export function LiveChat({ isOpen, onClose }: LiveChatProps) {
 
       if (error) throw error;
 
+      // Show customer confirmation (no lead capture details)
       toast({
-        title: "✅ Message Sent!",
-        description: "We'll contact you within 30 minutes with contractor matches!",
+        title: "✅ Request Submitted!",
+        description: "Thank you! We'll contact you soon with qualified contractors.",
       });
 
-      // Add confirmation message to chat
+      // Add confirmation message to chat for customer
       setMessages(prev => [...prev, {
         type: 'bot',
-        text: `🎯 Perfect! I've received your ${serviceNeeded} request and forwarded it to our top contractors in your area. Expect calls within 30 minutes with competitive quotes!`,
+        text: `✅ Thank you ${contactForm.name}! Your ${serviceNeeded} request has been submitted. You'll hear from qualified contractors in your area within the next few hours. We'll send you the best matches based on your needs!`,
         time: new Date().toLocaleTimeString()
       }]);
 
