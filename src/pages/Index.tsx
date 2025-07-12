@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Phone, MapPin, Clock, Star, Shield, Zap, Award, CheckCircle, Home, User, Settings, Brain, BrainCircuit } from "lucide-react";
+import { MessageCircle, Phone, MapPin, Clock, Star, Shield, Zap, Award, CheckCircle, Home, User, Settings, Brain, BrainCircuit, LogOut } from "lucide-react";
 import { LiveChat } from "@/components/LiveChat";
 import { useAuth } from "@/hooks/useAuth";
 import aiBrainHero from "@/assets/ai-brain-hero.jpg";
@@ -16,7 +16,7 @@ import floridaPalmCornerImg from "@/assets/florida-palm-corner.jpg";
 
 const Index = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const { user, profile } = useAuth();
+  const { user, profile, signOut } = useAuth();
 
   const services = [
     { name: "🏠 Roofing", description: "Emergency repairs & full replacement", price: "Get estimates when available", icon: "🏠", urgent: true },
@@ -81,11 +81,20 @@ const Index = () => {
                   <Link to="/dashboard">
                     <Button variant="outline" size="sm" className="flex items-center gap-2 glass-card border-primary/30">
                       <Settings className="h-4 w-4" />
-                      Dashboard
+                      🎯 Dashboard
                     </Button>
                   </Link>
                 )}
-                <span className="text-muted-foreground">Welcome, {profile?.full_name || user.email}</span>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={signOut}
+                  className="flex items-center gap-2 glass-card border-primary/30"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Sign Out
+                </Button>
+                <span className="text-muted-foreground text-sm">Welcome, {profile?.full_name || user.email}</span>
               </div>
             ) : (
               <Link to="/auth">
