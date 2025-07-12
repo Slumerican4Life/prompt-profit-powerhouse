@@ -184,16 +184,17 @@ export default function Dashboard() {
 
   const exportLeads = () => {
     const csvContent = [
-      ['Name', 'Email', 'Phone', 'Service', 'Urgency', 'Status', 'Value', 'Created'].join(','),
+      ['Name', 'Email', 'Phone', 'Service', 'Urgency', 'Status', 'Value', 'Description', 'Created'].join(','),
       ...filteredLeads.map(lead => [
-        lead.full_name,
-        lead.email,
-        lead.phone,
-        lead.service_needed,
-        lead.urgency_level || '',
-        lead.status,
-        lead.lead_value || '',
-        new Date(lead.created_at).toLocaleDateString()
+        `"${lead.full_name}"`,
+        `"${lead.email}"`,
+        `"${lead.phone}"`,
+        `"${lead.service_needed}"`,
+        `"${lead.urgency_level || 'normal'}"`,
+        `"${lead.status}"`,
+        `"$${lead.lead_value || 0}"`,
+        `"${(lead.project_description || '').replace(/"/g, '""')}"`,
+        `"${new Date(lead.created_at).toLocaleDateString()}"`
       ].join(','))
     ].join('\n');
 
@@ -203,6 +204,29 @@ export default function Dashboard() {
     a.href = url;
     a.download = `leads-${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
+  };
+
+  const exportToGoogleSheets = () => {
+    const headers = ['Name', 'Email', 'Phone', 'Service', 'Urgency', 'Status', 'Value', 'Description', 'Created'];
+    const data = filteredLeads.map(lead => [
+      lead.full_name,
+      lead.email,
+      lead.phone,
+      lead.service_needed,
+      lead.urgency_level || 'normal',
+      lead.status,
+      `$${lead.lead_value || 0}`,
+      lead.project_description || '',
+      new Date(lead.created_at).toLocaleDateString()
+    ]);
+
+    const csvData = [headers, ...data].map(row => row.join('\t')).join('\n');
+    navigator.clipboard.writeText(csvData);
+    
+    toast({
+      title: "📋 Copied to Clipboard!",
+      description: "Lead data copied. Paste into Google Sheets (Ctrl+V)",
+    });
   };
 
   const getStatusColor = (status: string) => {
@@ -317,6 +341,9 @@ export default function Dashboard() {
                 <Button onClick={exportLeads} variant="outline">
                   <Download className="h-4 w-4 mr-2" />
                   Export CSV
+                </Button>
+                <Button onClick={exportToGoogleSheets} variant="outline">
+                  📊 Copy for Sheets
                 </Button>
               </div>
             </div>

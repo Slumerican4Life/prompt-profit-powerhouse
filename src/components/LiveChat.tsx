@@ -189,13 +189,13 @@ export function LiveChat({ isOpen, onClose }: LiveChatProps) {
 
       if (error) throw error;
 
-      // Show customer confirmation (no lead capture details)
+      // Only show customer thank you message (no business notifications)
       toast({
         title: "✅ Request Submitted!",
         description: "Thank you! We'll contact you soon with qualified contractors.",
       });
 
-      // Add confirmation message to chat for customer
+      // Add confirmation message to chat for customer only
       setMessages(prev => [...prev, {
         type: 'bot',
         text: `✅ Thank you ${contactForm.name}! Your ${serviceNeeded} request has been submitted. You'll hear from qualified contractors in your area within the next few hours. We'll send you the best matches based on your needs!`,
